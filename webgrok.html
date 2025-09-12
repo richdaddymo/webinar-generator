@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KI Webinar-Assistent (Shiripour Edition)</title>
+  <title>KI Webinar-Assistent (Ibrahim Mohamed Edition)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -135,7 +135,7 @@
             </div>
             <div>
               <label for="moderator-name-input" class="block text-sm font-medium">Dein Name / Moderator</label>
-              <input type="text" id="moderator-name-input" class="w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm input-field" placeholder="z.B. Said Shiripour" required>
+              <input type="text" id="moderator-name-input" class="w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm input-field" placeholder="z.B. Ibrahim Mohamed" required>
             </div>
             <div>
                 <label for="webinar-name-input" class="block text-sm font-medium">Name des Webinars</label>
@@ -372,14 +372,14 @@
             showToast('Groq API Key fehlt. Bitte in Schritt 1 eingeben.', 'error');
             throw new Error('API Key is missing.');
         }
-        const API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+        const API_URL = 'https://api.x.ai/v1/chat/completions';
         
         const payload = {
             messages: [{
                 role: 'user',
                 content: prompt
             }],
-            model: 'llama3-70b-8192', // A powerful model available on Groq
+            model: 'grok-4-latest', // A powerful model available on Groq
             response_format: { type: 'json_object' }, // Crucial for getting JSON back
             temperature: 0.7,
             max_tokens: 4096 
