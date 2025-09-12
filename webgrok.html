@@ -130,8 +130,11 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-4">
             <div>
-              <label for="api-key-input" class="block text-sm font-medium">Dein Groq API Key</label>
-              <input type="password" id="api-key-input" class="w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm input-field" placeholder="Erforderlich für die KI-Generierung (beginnt mit gsk_...)" required>
+              <label for="api-key-input" class="block text-sm font-medium">Dein xAI (Grok) API Key</label>
+              <input type="password" id="api-key-input"
+                     class="w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm input-field"
+                     placeholder="Erforderlich für die KI-Generierung (xAI Key)"
+                     required>
             </div>
             <div>
               <label for="moderator-name-input" class="block text-sm font-medium">Dein Name / Moderator</label>
@@ -153,7 +156,6 @@
               <label for="product-upload" class="block text-sm font-medium">2. Deine Produktinfos & USP (TXT)</label>
               <input type="file" id="product-upload" accept=".txt" class="input-file" required>
             </div>
-            
           </div>
           <div class="space-y-4">
             <div>
@@ -188,7 +190,7 @@
               <input type="text" id="bonus-info" class="w-full p-2 border border-gray-300 rounded-md shadow-sm input-field" placeholder="Bonus 1, Bonus 2, ...">
             </div>
             <div>
-              <label for="pricing-info" class="block text-sm font-medium">Preisstaffelung (kommagetrennt)</label>
+              <label for="pricing-info" class="block textsm font-medium">Preisstaffelung (kommagetrennt)</label>
               <input type="text" id="pricing-info" class="w-full p-2 border border-gray-300 rounded-md shadow-sm input-field" placeholder="Gesamtwert, Rabattpreis 1, Endpreis">
             </div>
             <div>
@@ -273,12 +275,11 @@
       }
     };
 
-    // --- HELPER FUNCTIONS ---
+    // --- HELFER ---
     const escapeForPrompt = (str) => {
       if (!str) return '';
       return str.replace(/"/g, "'").replace(/\n/g, ' ').replace(/\r/g, '');
     };
-
     const readFileAsText = (file) => new Promise((resolve, reject) => {
       if (!file) return resolve('');
       const reader = new FileReader();
@@ -302,16 +303,16 @@
     };
     const yieldToUI = () => new Promise(r => setTimeout(r, 0));
     const rgbToHex = (rgb) => {
-        if (!rgb || !rgb.startsWith('rgb')) return rgb;
-        let sep = rgb.indexOf(',') > -1 ? ',' : ' ';
-        rgb = rgb.substr(4).split(')')[0].split(sep);
-        let r = (+rgb[0]).toString(16).padStart(2, '0');
-        let g = (+rgb[1]).toString(16).padStart(2, '0');
-        let b = (+rgb[2]).toString(16).padStart(2, '0');
-        return `#${r}${g}${b}`;
+      if (!rgb || !rgb.startsWith('rgb')) return rgb;
+      let sep = rgb.indexOf(',') > -1 ? ',' : ' ';
+      rgb = rgb.substr(4).split(')')[0].split(sep);
+      let r = (+rgb[0]).toString(16).padStart(2, '0');
+      let g = (+rgb[1]).toString(16).padStart(2, '0');
+      let b = (+rgb[2]).toString(16).padStart(2, '0');
+      return `#${r}${g}${b}`;
     };
 
-    // --- UI FUNCTIONS ---
+    // --- UI ---
     const toggleModalFullscreen = () => {
       const overlay = dom.main.fullscreenOverlay;
       const isVisible = !overlay.classList.contains('hidden');
@@ -357,69 +358,67 @@
       dom.sidebar.themeDarkBtn.classList.toggle('text-white', theme === 'dark');
       if (appState.webinarScript.length > 0) renderSlide(appState.currentSlideIndex);
     };
-    
     const applyAddressForm = (form) => {
-        appState.addressForm = form;
-        dom.inputs.addressFormDu.classList.toggle('shiripour-gradient-bg', form === 'du');
-        dom.inputs.addressFormDu.classList.toggle('text-white', form === 'du');
-        dom.inputs.addressFormSie.classList.toggle('shiripour-gradient-bg', form === 'sie');
-        dom.inputs.addressFormSie.classList.toggle('text-white', form === 'sie');
+      appState.addressForm = form;
+      dom.inputs.addressFormDu.classList.toggle('shiripour-gradient-bg', form === 'du');
+      dom.inputs.addressFormDu.classList.toggle('text-white', form === 'du');
+      dom.inputs.addressFormSie.classList.toggle('shiripour-gradient-bg', form === 'sie');
+      dom.inputs.addressFormSie.classList.toggle('text-white', form === 'sie');
     };
 
-    // --- START: MODIFIED CODE FOR GROQ API ---
-    const callGroqApi = async (prompt) => {
-        if (!appState.apiKey) {
-            showToast('Groq API Key fehlt. Bitte in Schritt 1 eingeben.', 'error');
-            throw new Error('API Key is missing.');
-        }
-        const API_URL = 'https://api.x.ai/v1/chat/completions';
-        
-        const payload = {
-            messages: [{
-                role: 'user',
-                content: prompt
-            }],
-            model: 'grok-4-latest', // A powerful model available on Groq
-            response_format: { type: 'json_object' }, // Crucial for getting JSON back
-            temperature: 0.7,
-            max_tokens: 4096 
-        };
+    // --- START: xAI (Grok) API ---
+    const callGrokApi = async (prompt) => {
+      if (!appState.apiKey) {
+        showToast('xAI (Grok) API Key fehlt. Bitte in Schritt 1 eingeben.', 'error');
+        throw new Error('API Key is missing.');
+      }
+      const API_URL = 'https://api.x.ai/v1/chat/completions';
+      const payload = {
+        messages: [{ role: 'user', content: prompt }],
+        model: 'grok-4-latest',
+        response_format: { type: 'json_object' },
+        temperature: 0.7,
+        max_tokens: 4096
+      };
 
-        const maxRetries = 5;
-        let lastError = null;
-        for (let i = 0; i < maxRetries; i++) {
-            try {
-                const resp = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${appState.apiKey}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-                if (resp.ok) return resp.json();
-                if (resp.status === 503 || resp.status === 429) {
-                    const delay = Math.pow(2, i) * 2000;
-                    dom.main.progressText.textContent = `API überlastet (Fehler ${resp.status}). Nächster Versuch in ${delay/1000}s...`;
-                    await new Promise(res => setTimeout(res, delay));
-                    continue;
-                }
-                const errorBody = await resp.text();
-                lastError = new Error(`HTTP ${resp.status}: ${errorBody}`);
-                break;
-            } catch (e) {
-                lastError = e;
-                const delay = Math.pow(2, i) * 2000;
-                dom.main.progressText.textContent = `Netzwerkfehler. Nächster Versuch in ${delay/1000}s...`;
-                await new Promise(res => setTimeout(res, delay));
-            }
+      const maxRetries = 5;
+      let lastError = null;
+      for (let i = 0; i < maxRetries; i++) {
+        try {
+          const resp = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${appState.apiKey}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          });
+          if (resp.ok) return resp.json();
+
+          const txt = await resp.text();
+          if (resp.status === 401 || resp.status === 403) {
+            throw new Error('Unauthorized/Forbidden: Prüfe deinen xAI Key & Modellzugriff. Details: ' + txt);
+          }
+          if (resp.status === 429 || resp.status === 503) {
+            const delay = Math.pow(2, i) * 2000;
+            dom.main.progressText.textContent = `API überlastet (Fehler ${resp.status}). Nächster Versuch in ${Math.round(delay/1000)}s...`;
+            await new Promise(res => setTimeout(res, delay));
+            continue;
+          }
+          lastError = new Error(`HTTP ${resp.status}: ${txt}`);
+          break;
+        } catch (e) {
+          lastError = e;
+          const delay = Math.pow(2, i) * 2000;
+          dom.main.progressText.textContent = `Netzwerkfehler. Nächster Versuch in ${Math.round(delay/1000)}s...`;
+          await new Promise(res => setTimeout(res, delay));
         }
-        throw lastError || new Error('API-Anfrage fehlgeschlagen.');
+      }
+      throw lastError || new Error('API-Anfrage fehlgeschlagen.');
     };
-    // --- END: MODIFIED CODE FOR GROQ API ---
+    // --- END: xAI (Grok) API ---
 
-
-    // --- MODULAR WEBINAR GENERATION based on 12-Step-Plan ---
+    // --- GENERATION ---
     const generateWebinar = async () => {
       appState.currentStep = 3; updateStepUI();
       dom.main.generationStatus.classList.remove('hidden');
@@ -432,12 +431,12 @@
       const totalSlideCount = appState.slideCount;
 
       const webinarStructure = [
-          { name: "Schritt 1-3: Intro, Bonus & Fokus", percentage: 0.10, instructions: `Erstelle die Startfolie mit dem Webinarnamen '${escapeForPrompt(appState.webinarName)}' und dem Hauptnutzen '${escapeForPrompt(appState.webinarBenefit)}'. Stelle den Moderator '${escapeForPrompt(appState.moderatorName)}' vor. Kündige das Geschenk '${escapeForPrompt(appState.giftPromise)}' für Teilnehmer an, die bis zum Ende bleiben. Fordere die Teilnehmer auf, sich zu konzentrieren und Ablenkungen zu entfernen, da es keine Aufzeichnung geben wird.` },
-          { name: "Schritt 4-5: Heldenstory & Motivation", percentage: 0.20, instructions: `Erzähle die Heldenstory des Moderators, um ihn als Experten zu positionieren. Die Story soll die Situation der Zielgruppe widerspiegeln und zeigen, dass Erfolg möglich ist. Motiviere die Teilnehmer, indem du ihnen das Gefühl gibst, dass sie ihre Ziele auch erreichen können. Fordere zu einer Interaktion im Chat auf (z.B. "Schreibe 'ICH WILL' in den Chat!").` },
-          { name: "Schritt 6-8: Content, Problem & Wunschzustand", percentage: 0.30, instructions: `Gib einen Einblick in das Thema (basierend auf den Produktinfos), ohne zu überfordern. Vertiefe das Kernproblem der Zielgruppe, um Dringlichkeit zu erzeugen. Male dann ein emotionales Bild des Wunschzustands (Ziele, Träume, Sorgenfreiheit), um ein positives Kopfkino zu erzeugen und die Brücke zur Lösung zu schlagen.` },
-          { name: "Schritt 9-10: Produktvorstellung & Inhalte", percentage: 0.15, instructions: `Präsentiere das Produkt als die perfekte und einzigartige Lösung. Hebe das Alleinstellungsmerkmal hervor. Stelle die einzelnen Module vor: ${appState.productModules.join(', ')}. Erkläre den Nutzen jedes Moduls und fasse den Gesamtwert zusammen.` },
-          { name: "Schritt 11: Verkaufsphase & CTA", percentage: 0.20, instructions: `Starte die Haupt-Verkaufsphase. Präsentiere die Bonus-Angebote: ${appState.bonusInfo.join(', ')}. Baue den Wert auf und präsentiere dann die Preisstaffelung: [${appState.pricingInfo.join(', ')}]. WICHTIG: Erstelle separate Folien, um den Preis schrittweise zu enthüllen (Value Stack -> Preisanker -> Rabatt -> Endpreis). Gib einen starken Call-To-Action zum Ziel: '${escapeForPrompt(appState.callToAction)}'. Erwähne die Garantie: '${escapeForPrompt(appState.guarantee)}'.` },
-          { name: "Schritt 12: Abschluss & FAQ", percentage: 0.05, instructions: `Nimm häufige Einwände und Ausreden vorweg (basierend auf den FAQs). Beantworte die wichtigsten Fragen aus den FAQs (eine Folie pro Frage/Antwort-Paar). Wiederhole den Call-To-Action. Bedanke dich bei den Teilnehmern und zeige eine Abschlussfolie.` }
+        { name: "Schritt 1-3: Intro, Bonus & Fokus", percentage: 0.10, instructions: `Erstelle die Startfolie mit dem Webinarnamen '${escapeForPrompt(appState.webinarName)}' und dem Hauptnutzen '${escapeForPrompt(appState.webinarBenefit)}'. Stelle den Moderator '${escapeForPrompt(appState.moderatorName)}' vor. Kündige das Geschenk '${escapeForPrompt(appState.giftPromise)}' für Teilnehmer an, die bis zum Ende bleiben. Fordere die Teilnehmer auf, sich zu konzentrieren und Ablenkungen zu entfernen, da es keine Aufzeichnung geben wird.` },
+        { name: "Schritt 4-5: Heldenstory & Motivation", percentage: 0.20, instructions: `Erzähle die Heldenstory des Moderators, um ihn als Experten zu positionieren. Die Story soll die Situation der Zielgruppe widerspiegeln und zeigen, dass Erfolg möglich ist. Motiviere die Teilnehmer, indem du ihnen das Gefühl gibst, dass sie ihre Ziele auch erreichen können. Fordere zu einer Interaktion im Chat auf (z.B. "Schreibe 'ICH WILL' in den Chat!").` },
+        { name: "Schritt 6-8: Content, Problem & Wunschzustand", percentage: 0.30, instructions: `Gib einen Einblick in das Thema (basierend auf den Produktinfos), ohne zu überfordern. Vertiefe das Kernproblem der Zielgruppe, um Dringlichkeit zu erzeugen. Male dann ein emotionales Bild des Wunschzustands (Ziele, Träume, Sorgenfreiheit), um ein positives Kopfkino zu erzeugen und die Brücke zur Lösung zu schlagen.` },
+        { name: "Schritt 9-10: Produktvorstellung & Inhalte", percentage: 0.15, instructions: `Präsentiere das Produkt als die perfekte und einzigartige Lösung. Hebe das Alleinstellungsmerkmal hervor. Stelle die einzelnen Module vor: ${appState.productModules.join(', ')}. Erkläre den Nutzen jedes Moduls und fasse den Gesamtwert zusammen.` },
+        { name: "Schritt 11: Verkaufsphase & CTA", percentage: 0.20, instructions: `Starte die Haupt-Verkaufsphase. Präsentiere die Bonus-Angebote: ${appState.bonusInfo.join(', ')}. Baue den Wert auf und präsentiere dann die Preisstaffelung: [${appState.pricingInfo.join(', ')}]. WICHTIG: Erstelle separate Folien, um den Preis schrittweise zu enthüllen (Value Stack -> Preisanker -> Rabatt -> Endpreis). Gib einen starken Call-To-Action zum Ziel: '${escapeForPrompt(appState.callToAction)}'. Erwähne die Garantie: '${escapeForPrompt(appState.guarantee)}'.` },
+        { name: "Schritt 12: Abschluss & FAQ", percentage: 0.05, instructions: `Nimm häufige Einwände und Ausreden vorweg (basierend auf den FAQs). Beantworte die wichtigsten Fragen aus den FAQs (eine Folie pro Frage/Antwort-Paar). Wiederhole den Call-To-Action. Bedanke dich bei den Teilnehmern und zeige eine Abschlussfolie.` }
       ];
 
       try {
@@ -469,46 +468,39 @@
             * Zielgruppe (Probleme & Wünsche): "${escapeForPrompt(appState.audienceContent)}"
             * FAQs & Einwände: "${escapeForPrompt(appState.faqContent)}"
           `;
-          
-          // --- MODIFIED CALL ---
-          const result = await callGroqApi(prompt);
-          // --- MODIFIED RESPONSE PARSING ---
+
+          const result = await callGrokApi(prompt);
           let jsonString = result.choices?.[0]?.message?.content;
-          
-          if (!jsonString) {
-              throw new Error(`Leere Antwort von der KI für Sektion "${section.name}".`);
-          }
+          if (!jsonString) throw new Error(`Leere Antwort von der KI für Sektion "${section.name}".`);
 
-          let cleanJsonString = jsonString
-              .replace(/^```json\s*/, '')
-              .replace(/```$/, '')
-              .trim();
-
+          let cleanJsonString = jsonString.replace(/^```json\s*/, '').replace(/```$/, '').trim();
           const firstBracket = cleanJsonString.indexOf('{');
           const lastBracket = cleanJsonString.lastIndexOf('}');
           if (firstBracket !== -1 && lastBracket > firstBracket) {
-              cleanJsonString = cleanJsonString.substring(firstBracket, lastBracket + 1);
+            cleanJsonString = cleanJsonString.substring(firstBracket, lastBracket + 1);
           } else {
-              console.error("Raw response from AI:", jsonString);
-              throw new Error(`Kein valides JSON-Objekt in der KI-Antwort für Sektion "${section.name}" gefunden.`);
+            console.error("Raw response from AI:", jsonString);
+            throw new Error(`Kein valides JSON-Objekt in der KI-Antwort für Sektion "${section.name}" gefunden.`);
           }
 
           cleanJsonString = cleanJsonString.replace(/,\s*([\]}])/g, '$1');
 
           let pkg;
           try {
-              pkg = JSON.parse(cleanJsonString);
+            pkg = JSON.parse(cleanJsonString);
           } catch (err) {
-              console.error("Failed to parse JSON:", cleanJsonString);
-              throw new Error(`KI gab kein valides JSON für Sektion "${section.name}" zurück. Details im Konsolen-Log.`);
+            console.error("Failed to parse JSON:", cleanJsonString);
+            throw new Error(`KI gab kein valides JSON für Sektion "${section.name}" zurück. Details im Konsolen-Log.`);
           }
           
-          if (!Array.isArray(pkg.slides) || !Array.isArray(pkg.speakerNotes)) { throw new Error(`Ungültiges Datenformat in Sektion "${section.name}".`); }
+          if (!Array.isArray(pkg.slides) || !Array.isArray(pkg.speakerNotes)) {
+            throw new Error(`Ungültiges Datenformat in Sektion "${section.name}".`);
+          }
           
           allSlides.push(...pkg.slides);
           allSpeakerNotes.push(...pkg.speakerNotes);
           await yieldToUI();
-          await new Promise(res => setTimeout(res, 1000)); // Add 1-second delay between sections
+          await new Promise(res => setTimeout(res, 1000));
         }
 
         appState.webinarScript = allSlides; 
@@ -520,7 +512,9 @@
         showToast(`Webinar mit ${allSlides.length} Folien erfolgreich generiert!`, 'success');
 
       } catch (e) {
-        console.error('Generation Fehler', e); showToast(`Generierung fehlgeschlagen: ${e.message}`, 'error'); appState.currentStep = 2; updateStepUI();
+        console.error('Generation Fehler', e);
+        showToast(`Generierung fehlgeschlagen: ${e.message}`, 'error');
+        appState.currentStep = 2; updateStepUI();
       } finally {
         dom.main.generationStatus.classList.add('hidden');
         dom.main.slideContainer.classList.remove('slide-hidden');
@@ -529,11 +523,10 @@
       }
     };
 
-    // --- RENDER & DRAG --- 
+    // --- RENDER & DRAG ---
     const renderSlide = (index, targetContainer = dom.main.slideContainer) => {
       if (!appState.webinarScript.length) return;
       if (targetContainer === dom.main.slideContainer) appState.currentSlideIndex = index;
-      
       const slideData = appState.webinarScript[index];
       if (!slideData) { console.error(`Keine Foliendaten für Index ${index}`); return; }
 
@@ -565,26 +558,26 @@
       let mainContentArea;
 
       if (layout.startsWith('split')) {
-          mainContentArea = document.createElement('div');
-          mainContentArea.className = 'flex w-full h-full gap-8 items-center';
-          const textContainer = document.createElement('div');
-          textContainer.className = 'w-1/2 flex flex-col justify-center text-left slide-text-container';
-          const imageContainer = document.createElement('div');
-          imageContainer.className = 'w-1/2 h-4/5 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg border-2 border-dashed border-gray-400 p-4 text-center text-sm text-gray-500';
-          imageContainer.innerHTML = slideData.image_prompt || 'Bild-Platzhalter';
-          
-          if (layout === 'split_left_text') {
-              mainContentArea.appendChild(textContainer);
-              mainContentArea.appendChild(imageContainer);
-          } else { // split_right_text
-              mainContentArea.appendChild(imageContainer);
-              mainContentArea.appendChild(textContainer);
-          }
-          wrapper.appendChild(mainContentArea);
-      } else { // default layout
-          mainContentArea = document.createElement('div');
-          mainContentArea.className = 'flex flex-col justify-center items-center text-center w-full h-full gap-4';
-          wrapper.appendChild(mainContentArea);
+        mainContentArea = document.createElement('div');
+        mainContentArea.className = 'flex w-full h-full gap-8 items-center';
+        const textContainer = document.createElement('div');
+        textContainer.className = 'w-1/2 flex flex-col justify-center text-left slide-text-container';
+        const imageContainer = document.createElement('div');
+        imageContainer.className = 'w-1/2 h-4/5 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg border-2 border-dashed border-gray-400 p-4 text-center text-sm text-gray-500';
+        imageContainer.innerHTML = slideData.image_prompt || 'Bild-Platzhalter';
+        
+        if (layout === 'split_left_text') {
+          mainContentArea.appendChild(textContainer);
+          mainContentArea.appendChild(imageContainer);
+        } else {
+          mainContentArea.appendChild(imageContainer);
+          mainContentArea.appendChild(textContainer);
+        }
+        wrapper.appendChild(mainContentArea);
+      } else {
+        mainContentArea = document.createElement('div');
+        mainContentArea.className = 'flex flex-col justify-center items-center text-center w-full h-full gap-4';
+        wrapper.appendChild(mainContentArea);
       }
 
       const textTarget = layout.startsWith('split') ? mainContentArea.querySelector('.slide-text-container') : mainContentArea;
@@ -595,7 +588,8 @@
         el.dataset.key = 'title';
         el.innerHTML = content.title;
         Object.assign(el.style, slidePositions.title?.styles || { fontFamily: 'Montserrat', fontSize: '3rem', fontWeight: '900' });
-        if(slidePositions.title?.position) { el.style.position = 'absolute'; Object.assign(el.style, slidePositions.title.position); wrapper.appendChild(el); } else { textTarget.appendChild(el); }
+        if (slidePositions.title?.position) { el.style.position = 'absolute'; Object.assign(el.style, slidePositions.title.position); wrapper.appendChild(el); }
+        else { textTarget.appendChild(el); }
       }
       if (content.subtitle) {
         const el = document.createElement('h2');
@@ -603,7 +597,8 @@
         el.dataset.key = 'subtitle';
         el.innerHTML = content.subtitle;
         Object.assign(el.style, slidePositions.subtitle?.styles || { color: 'var(--text-secondary)', fontSize: '1.5rem' });
-         if(slidePositions.subtitle?.position) { el.style.position = 'absolute'; Object.assign(el.style, slidePositions.subtitle.position); wrapper.appendChild(el); } else { textTarget.appendChild(el); }
+        if (slidePositions.subtitle?.position) { el.style.position = 'absolute'; Object.assign(el.style, slidePositions.subtitle.position); wrapper.appendChild(el); }
+        else { textTarget.appendChild(el); }
       }
       if (Array.isArray(content.points)) {
         const items = content.points.map(p => `<li class="flex items-start"><span class="text-2xl mr-3" style="color: var(--brand-primary);">&check;</span><span class="text-lg">${p}</span></li>`).join('');
@@ -611,7 +606,8 @@
         el.className = 'draggable mt-6 space-y-3 max-w-2xl';
         el.dataset.key = 'points';
         el.innerHTML = items;
-         if(slidePositions.points?.position) { el.style.position = 'absolute'; Object.assign(el.style, slidePositions.points.position); wrapper.appendChild(el); } else { textTarget.appendChild(el); }
+        if (slidePositions.points?.position) { el.style.position = 'absolute'; Object.assign(el.style, slidePositions.points.position); wrapper.appendChild(el); }
+        else { textTarget.appendChild(el); }
       }
       
       targetContainer.appendChild(wrapper);
@@ -621,7 +617,6 @@
         updateSlideControls(index);
       }
     };
-
 
     const makeDraggable = (element) => {
       let pos1=0,pos2=0,pos3=0,pos4=0;
@@ -658,13 +653,13 @@
       dom.main.nextBtn.disabled = index >= appState.webinarScript.length - 1;
     };
 
-    // --- EXPORT FUNCTIONS ---
+    // --- EXPORT ---
     const downloadScriptAsDoc = () => {
       if (!appState.speakerNotes.length) return showToast('Kein Skript zum Herunterladen vorhanden.', 'error');
       let scriptContent = `<h1>Webinar-Skript für ${appState.moderatorName}</h1>`;
       appState.speakerNotes.forEach((note, i) => { 
-          const slideTitle = appState.webinarScript[i]?.content?.title || `Folie ${i+1}`;
-          scriptContent += `<br><hr><br><h2>${slideTitle}</h2><p>${note}</p>`; 
+        const slideTitle = appState.webinarScript[i]?.content?.title || `Folie ${i+1}`;
+        scriptContent += `<br><hr><br><h2>${slideTitle}</h2><p>${note}</p>`; 
       });
       const sourceHTML = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Webinar Skript</title></head><body>${scriptContent}</body></html>`;
       const a = document.createElement('a'); a.href = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML); a.download = 'webinar-skript.doc'; document.body.appendChild(a); a.click(); a.remove();
@@ -688,20 +683,20 @@
         const titleDefaults = { fontFace: 'Montserrat', bold: true, color: '6a0dad' };
 
         if (layout.startsWith('split')) {
-            const isTextLeft = layout === 'split_left_text';
-            const textX = isTextLeft ? 0.5 : 5.2;
-            const imageX = isTextLeft ? 5.2 : 0.5;
+          const isTextLeft = layout === 'split_left_text';
+          const textX = isTextLeft ? 0.5 : 5.2;
+          const imageX = isTextLeft ? 5.2 : 0.5;
 
-            if (c.title) s.addText(c.title, { x: textX, y: 1.5, w: 4.3, h: 1, align: 'left', fontSize: 28, ...titleDefaults });
-            if (c.subtitle) s.addText(c.subtitle, { x: textX, y: 2.5, w: 4.3, h: 1, align: 'left', fontSize: 18, color: appState.theme === 'dark' ? 'A0AEC0' : '4A5568' });
-            if (Array.isArray(c.points)) s.addText(c.points.join('\n'), { x: textX, y: 3.0, w: 4.3, h: 2, fontSize: 14, ...textDefaults, bullet:{type:'char', char:'✔', style:{color:'6a0dad'}} });
-            
-            s.addShape(pptx.ShapeType.rect, { x: imageX, y: 1, w: 4.3, h: 3.6, fill: { color: 'F1F1F1' } });
-            s.addText(slideData.image_prompt || 'Bild hier einfügen', { x: imageX, y: 1, w: 4.3, h: 3.6, align: 'center', valign: 'middle', color: '888888', fontSize: 12 });
-        } else { // default
-            if (c.title) s.addText(c.title, { x: 0.5, y: 1.5, w: 9, h: 1, align: 'center', fontSize: 36, ...titleDefaults });
-            if (c.subtitle) s.addText(c.subtitle, { x: 0.5, y: 2.5, w: 9, h: 1, align: 'center', fontSize: 24, color: appState.theme === 'dark' ? 'A0AEC0' : '4A5568' });
-            if (Array.isArray(c.points)) s.addText(c.points.join('\n'), { x: 1.5, y: 3.0, w: 7, h: 2, fontSize: 18, ...textDefaults, align: 'center', bullet:{type:'char', char:'✔', style:{color:'6a0dad'}} });
+          if (c.title) s.addText(c.title, { x: textX, y: 1.5, w: 4.3, h: 1, align: 'left', fontSize: 28, ...titleDefaults });
+          if (c.subtitle) s.addText(c.subtitle, { x: textX, y: 2.5, w: 4.3, h: 1, align: 'left', fontSize: 18, color: appState.theme === 'dark' ? 'A0AEC0' : '4A5568' });
+          if (Array.isArray(c.points)) s.addText(c.points.join('\n'), { x: textX, y: 3.0, w: 4.3, h: 2, fontSize: 14, ...textDefaults, bullet:{type:'char', char:'✔', style:{color:'6a0dad'}} });
+          
+          s.addShape(pptx.ShapeType.rect, { x: imageX, y: 1, w: 4.3, h: 3.6, fill: { color: 'F1F1F1' } });
+          s.addText(slideData.image_prompt || 'Bild hier einfügen', { x: imageX, y: 1, w: 4.3, h: 3.6, align: 'center', valign: 'middle', color: '888888', fontSize: 12 });
+        } else {
+          if (c.title) s.addText(c.title, { x: 0.5, y: 1.5, w: 9, h: 1, align: 'center', fontSize: 36, ...titleDefaults });
+          if (c.subtitle) s.addText(c.subtitle, { x: 0.5, y: 2.5, w: 9, h: 1, align: 'center', fontSize: 24, color: appState.theme === 'dark' ? 'A0AEC0' : '4A5568' });
+          if (Array.isArray(c.points)) s.addText(c.points.join('\n'), { x: 1.5, y: 3.0, w: 7, h: 2, fontSize: 18, ...textDefaults, align: 'center', bullet:{type:'char', char:'✔', style:{color:'6a0dad'}} });
         }
 
         const logoOpts = { x: (parseFloat(dom.sidebar.logoX.value)/100)*W, y: (parseFloat(dom.sidebar.logoY.value)/100)*H, w: (parseFloat(dom.sidebar.logoSize.value)/100)*(W*0.3) };
@@ -722,7 +717,7 @@
       }
     };
 
-    // --- TEXT-EDITOR UI ---
+    // --- TEXT-EDITOR ---
     const showTextEditor = (el) => {
       activeTextElement = el; const rect = el.getBoundingClientRect(); const editor = dom.textEditor.commandCenter;
       editor.style.top = `${window.scrollY + rect.top - editor.offsetHeight - 5}px`; editor.style.left = `${window.scrollX + rect.left + (rect.width/2) - (editor.offsetWidth/2)}px`; editor.classList.add('show');
@@ -740,7 +735,7 @@
       appState.elementPositions[slideIndex][key].styles[style] = value;
     };
 
-    // --- EVENT LISTENERS ---
+    // --- EVENTS ---
     dom.buttons.goToStep2.addEventListener('click', async () => {
       const required = [dom.inputs.apiKeyInput, dom.inputs.moderatorName, dom.inputs.webinarName, dom.inputs.webinarBenefit, dom.inputs.heroStory, dom.inputs.product, dom.inputs.audience];
       if (required.some(input => !input.value?.trim() && !(input.files?.length))) return showToast('Bitte alle erforderlichen Felder ausfüllen und Dateien hochladen.', 'error');
@@ -800,9 +795,9 @@
         const newContent = activeTextElement.innerHTML;
         
         if (appState.webinarScript[slideIndex]?.content?.[key] !== newContent) {
-            saveState();
-            appState.webinarScript[slideIndex].content[key] = newContent;
-            showToast('Text aktualisiert', 'info', 1500);
+          saveState();
+          appState.webinarScript[slideIndex].content[key] = newContent;
+          showToast('Text aktualisiert', 'info', 1500);
         }
 
         activeTextElement.removeAttribute('contenteditable');
@@ -810,13 +805,7 @@
       }
     });
 
-    dom.textEditor.fontFamily.addEventListener('change', e => applyTextStyle('fontFamily', e.target.value));
-    dom.textEditor.fontSize.addEventListener('input', e => applyTextStyle('fontSize', `${e.target.value}px`));
-    dom.textEditor.fontColor.addEventListener('input', e => applyTextStyle('color', e.target.value));
-    dom.textEditor.boldBtn.addEventListener('click', () => applyTextStyle('fontWeight', activeTextElement.style.fontWeight === 'bold' ? 'normal' : 'bold'));
-    dom.textEditor.italicBtn.addEventListener('click', () => applyTextStyle('fontStyle', activeTextElement.style.fontStyle === 'italic' ? 'normal' : 'italic'));
-
-    // --- INITIALIZATION ---
+    // INIT
     updateStepUI();
     applyTheme(appState.theme);
     applyAddressForm(appState.addressForm);
