@@ -895,7 +895,7 @@
             case 'gemini':
                 apiKey = appState.geminiApiKey;
                 if (!apiKey) throw new Error('Google Gemini API Key fehlt.');
-                apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${apiKey}`;
+                apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
                 headers = { 'Content-Type': 'application/json' };
                 payload = {
                     contents: [{ parts: [{ text: prompt }] }],
