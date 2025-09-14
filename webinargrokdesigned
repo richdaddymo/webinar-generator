@@ -1,0 +1,1655 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KI Webinar-Assistent (Ibrahim Mohamed Edition)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root {
+      --brand-primary: #6366f1;
+      --brand-secondary: #a78bfa;
+      --brand-accent: #f59e0b;
+      --brand-dark: #0f172a;
+      --text-light: #f8fafc;
+      --text-dark: #0f172a;
+      --success: #10b981;
+      --error: #ef4444;
+      --info: #3b82f6;
+      --bg-light: #f8fafc;
+      --bg-dark: #1e293b;
+    }
+    body { 
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); 
+      font-family: 'Inter', sans-serif; 
+      color: var(--text-dark); 
+      min-height: 100vh;
+    }
+    h1, h2, h3, .font-title { font-family: 'Space Grotesk', sans-serif; }
+    .modern-gradient-bg { 
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%); 
+    }
+    .modern-gradient-text { 
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%); 
+      -webkit-background-clip: text; 
+      -webkit-text-fill-color: transparent; 
+    }
+    .cta-button { 
+      background: linear-gradient(to right, var(--brand-accent), #fbbf24); 
+      color: #1f2937; 
+      font-family: 'Space Grotesk', sans-serif; 
+      font-weight: 600; 
+      border-radius: 12px; 
+      text-transform: uppercase; 
+      letter-spacing: 0.05em;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+      box-shadow: 0 4px 20px 0 rgba(245, 158, 11, 0.3); 
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+    .cta-button:hover { 
+      transform: translateY(-2px); 
+      box-shadow: 0 8px 30px 0 rgba(245, 158, 11, 0.4); 
+    }
+    .input-field { 
+      transition: all 0.2s ease; 
+      border: 1px solid #e2e8f0; 
+      border-radius: 12px; 
+      background: white;
+    }
+    .input-field:focus { 
+      border-color: var(--brand-primary); 
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); 
+      outline: none; 
+      transform: translateY(-1px);
+    }
+    .input-file { 
+      width: 100%; 
+      font-size: 0.875rem; 
+      color: #64748b; 
+      margin-top: 0.25rem; 
+      padding: 0.75rem; 
+      border: 2px dashed #d1d5db; 
+      border-radius: 12px; 
+      background: #f9fafb;
+      transition: all 0.2s ease;
+    }
+    .input-file:hover { background: #f3f4f6; }
+    .input-file::file-selector-button { 
+      margin-right: 1rem; 
+      padding: 0.5rem 1rem; 
+      border-radius: 8px; 
+      border: 0; 
+      font-size: 0.875rem; 
+      font-weight: 500; 
+      background: linear-gradient(to right, var(--brand-primary), var(--brand-secondary)); 
+      color: white; 
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .input-file::file-selector-button:hover { transform: scale(1.05); }
+
+    .slide-container { 
+      aspect-ratio: 16 / 9; 
+      width: 100%; 
+      max-width: 1200px; 
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); 
+      border-radius: 20px; 
+      overflow: hidden; 
+      position: relative; 
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+      background-color: #fff; 
+      border: 1px solid rgba(99, 102, 241, 0.1);
+    }
+    .slide-container:hover { transform: scale(1.005); }
+    .slide-hidden { opacity: 0; transform: scale(0.98) translateY(10px); }
+    .slide-container.theme-light { --bg-slide: #ffffff; --text-primary: #0f172a; --text-secondary: #64748b; --border-color: #e2e8f0; }
+    .slide-container.theme-dark { --bg-slide: var(--brand-dark); --text-primary: #f8fafc; --text-secondary: #cbd5e1; --border-color: #475569; }
+    .slide-content-wrapper { 
+      width: 100%; 
+      height: 100%; 
+      background-color: var(--bg-slide); 
+      color: var(--text-primary); 
+      position: relative; 
+      display: flex; 
+    }
+    [contenteditable]:hover { 
+      outline: 2px dashed var(--brand-primary); 
+      cursor: text; 
+      border-radius: 8px;
+    }
+    [contenteditable]:focus { 
+      outline: 2px solid var(--brand-primary); 
+      background-color: rgba(99, 102, 241, 0.05); 
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.2); 
+      border-radius: 12px;
+    }
+    .draggable { 
+      cursor: grab; 
+      user-select: none; 
+      transition: all 0.2s ease;
+    }
+    .draggable:active { cursor: grabbing; }
+    .slide-footer, .slide-logo { 
+      position: absolute; 
+      font-size: 0.75rem; 
+      color: var(--text-secondary); 
+      z-index: 10; 
+      font-weight: 500;
+    }
+    .slide-footer { bottom: 1rem; right: 1.5rem; }
+    .slide-logo { top: 1rem; left: 1.5rem; max-width: 150px; position: absolute; }
+    .slide-logo img { width: 100%; height: auto; border-radius: 8px; }
+
+    .loader { 
+      border: 4px solid #f3f4f6; 
+      border-top: 4px solid var(--brand-primary); 
+      border-radius: 50%; 
+      width: 40px; 
+      height: 40px; 
+      animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite; 
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    .step-progress { 
+      display: flex; 
+      justify-content: space-between; 
+      position: relative; 
+      width: 100%; 
+      max-width: 600px; 
+      margin: 2rem auto; 
+      padding: 0 1rem;
+    }
+    .step-progress::before { 
+      content: ''; 
+      position: absolute; 
+      top: 20px; 
+      left: 10%; 
+      right: 10%; 
+      height: 3px; 
+      background: linear-gradient(90deg, #e2e8f0 0%, #e2e8f0 100%); 
+      z-index: 0; 
+      border-radius: 2px;
+    }
+    #step-progress-bar { 
+      position: absolute; 
+      top: 20px; 
+      left: 10%; 
+      width: 0%; 
+      height: 3px; 
+      background: linear-gradient(90deg, var(--brand-primary) 0%, var(--brand-secondary) 100%); 
+      z-index: 0; 
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); 
+      border-radius: 2px;
+    }
+    .step { 
+      text-align: center; 
+      z-index: 1; 
+      flex: 1;
+    }
+    .step-circle { 
+      width: 40px; 
+      height: 40px; 
+      border-radius: 50%; 
+      background: #e2e8f0; 
+      color: white; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      font-weight: 600; 
+      transition: all 0.3s ease; 
+      margin: 0 auto; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .step.active .step-circle { 
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary)); 
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
+    }
+    .step.completed .step-circle { 
+      background: var(--success); 
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+    }
+    .step-label { 
+      margin-top: 0.75rem; 
+      font-size: 0.875rem; 
+      color: #94a3b8; 
+      transition: all 0.3s ease; 
+      font-weight: 500;
+    }
+    .step.active .step-label, .step.completed .step-label { 
+      color: var(--text-dark); 
+      font-weight: 600; 
+    }
+
+    #generation-status { 
+      position: absolute; 
+      inset: 0; 
+      display: flex; 
+      flex-direction: column; 
+      justify-content: center; 
+      align-items: center; 
+      z-index: 50; 
+      transition: all 0.3s ease; 
+      backdrop-filter: blur(10px); 
+    }
+    .theme-light #generation-status { background-color: rgba(255, 255, 255, 0.95); }
+    .theme-dark  #generation-status { background-color: rgba(30, 41, 59, 0.95); }
+    #generation-status.hidden { opacity: 0; pointer-events: none; }
+
+    .toast { 
+      position: fixed; 
+      top: 1.5rem; 
+      right: 1.5rem; 
+      padding: 1rem 1.5rem; 
+      border-radius: 12px; 
+      color: white; 
+      z-index: 10000; 
+      opacity: 0; 
+      transform: translateX(100%) translateY(-10px); 
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+      font-weight: 500;
+    }
+    .toast.show { 
+      opacity: 1; 
+      transform: translateX(0) translateY(0); 
+    }
+    .toast.success { background: linear-gradient(135deg, var(--success), #34d399); }
+    .toast.error { background: linear-gradient(135deg, var(--error), #f87171); }
+    .toast.info { background: linear-gradient(135deg, var(--info), #60a5fa); }
+
+    #text-command-center { 
+      position: absolute; 
+      display: none; 
+      background: rgba(15, 23, 42, 0.95); 
+      color: white; 
+      padding: 0.75rem; 
+      border-radius: 12px; 
+      z-index: 100; 
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3), 0 10px 10px -5px rgba(0,0,0,0.2); 
+      gap: 0.5rem; 
+      backdrop-filter: blur(10px);
+    }
+    #text-command-center.show { display: flex; }
+    #text-command-center button, #text-command-center select, #text-command-center input { 
+      background: rgba(51, 65, 85, 0.8); 
+      color: white; 
+      border: 1px solid rgba(71, 85, 105, 0.5); 
+      padding: 0.5rem 0.75rem; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      font-size: 0.875rem; 
+      transition: all 0.2s ease;
+    }
+    #text-command-center button:hover, #text-command-center select:focus, #text-command-center input:focus { 
+      background: var(--brand-primary); 
+      border-color: var(--brand-primary);
+      transform: translateY(-1px);
+    }
+    #gradient-controls span { font-size: 0.75rem; margin: 0 0.5rem; opacity: 0.8; }
+    .alignment-btn { 
+      background: rgba(51, 65, 85, 0.8); 
+      color: white; 
+      border: 1px solid rgba(71, 85, 105, 0.5); 
+      padding: 0.75rem; 
+      border-radius: 8px; 
+      width: 44px; 
+      height: 44px; 
+      display: inline-flex; 
+      justify-content: center; 
+      align-items: center; 
+      transition: all 0.2s ease;
+    }
+    .alignment-btn:hover { 
+      background: var(--brand-primary); 
+      transform: scale(1.05);
+    }
+    .alignment-btn.active { 
+      background: var(--brand-primary); 
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+
+    /* Sidebar Enhancements */
+    .sidebar {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-right: 1px solid rgba(226, 232, 240, 0.5);
+    }
+    .sidebar h2 {
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Form Group Styling */
+    .form-group {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      margin-bottom: 1rem;
+      transition: all 0.2s ease;
+    }
+    .form-group:hover {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      transform: translateY(-2px);
+    }
+    .form-group label {
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    /* Step Content Enhancements */
+    #step1-content {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+      padding: 2rem;
+      max-width: 800px;
+    }
+    #step1-content h3 {
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Button Variants */
+    .theme-btn {
+      transition: all 0.2s ease;
+      border: 1px solid #e2e8f0;
+    }
+    .theme-btn:hover {
+      border-color: var(--brand-primary);
+      transform: translateY(-1px);
+    }
+    .theme-btn.active {
+      background: var(--brand-primary);
+      color: white;
+    }
+
+    /* Alignment Grid */
+    #alignment-controls .grid {
+      gap: 0.5rem;
+    }
+
+    /* Fullscreen Overlay */
+    #fullscreen-overlay {
+      backdrop-filter: blur(20px);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .step-progress { padding: 0 0.5rem; }
+      .step-circle { width: 32px; height: 32px; font-size: 0.875rem; }
+      .step-label { font-size: 0.75rem; }
+      .slide-container { max-width: 100%; border-radius: 12px; }
+    }
+  </style>
+</head>
+<body class="flex flex-col lg:flex-row min-h-screen">
+  <aside class="sidebar w-full lg:w-80 p-6 lg:h-screen lg:sticky top-0 overflow-y-auto transition-all duration-300">
+    <h2 class="text-3xl font-black mb-8 modern-gradient-text">Steuerzentrale</h2>
+    
+    <!-- Step 1 is in main content area -->
+    
+    <div id="step2-controls" class="hidden space-y-6">
+        <button id="back-to-step1-btn" class="w-full bg-slate-500 text-white py-3 px-4 rounded-xl font-semibold hover:bg-slate-600 transition-all duration-200 flex items-center justify-center gap-2">
+          <i class="fas fa-arrow-left"></i> Zurück zu Schritt 1
+        </button>
+        <div class="form-group">
+            <label for="slide-count-slider" class="block text-sm font-semibold mb-2">Folienanzahl (ca.): <span id="slide-count-display" class="font-bold text-brand-primary">200</span></label>
+            <input type="range" id="slide-count-slider" min="10" max="300" value="200" step="5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+        </div>
+        <div class="form-group">
+            <label class="block text-sm font-semibold mb-2">Hintergrund</label>
+            <div class="flex rounded-xl shadow-sm overflow-hidden">
+                <button id="theme-light-btn" class="theme-btn flex-1 px-4 py-3 text-sm font-medium border-r" data-theme="light">Hell</button>
+                <button id="theme-dark-btn" class="theme-btn flex-1 px-4 py-3 text-sm font-medium" data-theme="dark">Dunkel</button>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="block text-sm font-semibold mb-2">Logo Upload</label>
+            <input type="file" id="logo-upload" accept="image/*" class="input-file">
+        </div>
+        <button id="generate-and-preview-btn" class="w-full cta-button py-4 px-6 text-lg font-semibold shadow-lg">
+          <i class="fas fa-magic mr-2"></i> Webinar generieren (Schritt 3)
+        </button>
+    </div>
+
+    <div id="step3-controls" class="hidden space-y-6">
+        <button id="back-to-step2-btn" class="w-full bg-slate-500 text-white py-3 px-4 rounded-xl font-semibold hover:bg-slate-600 transition-all duration-200 flex items-center justify-center gap-2">
+          <i class="fas fa-arrow-left"></i> Zurück zu Schritt 2
+        </button>
+        <div class="form-group">
+            <h3 class="font-bold text-xl mb-4 modern-gradient-text">Folien-Editor</h3>
+            <button id="undo-btn" class="w-full bg-slate-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-slate-600 transition-all duration-200 flex items-center justify-center gap-2">
+              <i class="fas fa-undo"></i> Rückgängig
+            </button>
+        </div>
+        <div class="form-group">
+            <label class="block text-sm font-semibold mb-2">Logo Position & Größe</label>
+            <div class="space-y-3">
+                <input type="range" id="logo-x" min="0" max="95" value="3" class="w-full" title="X-Position (%)">
+                <input type="range" id="logo-y" min="0" max="95" value="2" class="w-full" title="Y-Position (%)">
+                <input type="range" id="logo-size" min="5" max="30" value="15" class="w-full" title="Größe (%)">
+            </div>
+        </div>
+        
+        <div id="alignment-controls" class="hidden">
+             <label class="block text-sm font-semibold mb-3">Positionierung & Ausrichtung</label>
+             <div class="grid grid-cols-3 gap-2">
+                <button class="alignment-btn" data-align-h="left" data-align-v="top" title="Oben links">
+                  <i class="fas fa-arrow-up-left text-sm"></i>
+                </button>
+                <button class="alignment-btn" data-align-h="center" data-align-v="top" title="Oben mitte">
+                  <i class="fas fa-arrow-up text-sm"></i>
+                </button>
+                <button class="alignment-btn" data-align-h="right" data-align-v="top" title="Oben rechts">
+                  <i class="fas fa-arrow-up-right text-sm"></i>
+                </button>
+                <button class="alignment-btn" data-align-h="left" data-align-v="center" title="Mitte links">
+                  <i class="fas fa-arrow-left text-sm"></i>
+                </button>
+                <button class="alignment-btn" data-align-h="center" data-align-v="center" title="Mitte">
+                  <i class="fas fa-crosshairs text-sm"></i>
+                </button>
+                <button class="alignment-btn" data-align-h="right" data-align-v="center" title="Mitte rechts">
+                  <i class="fas fa-arrow-right text-sm"></i>
+                </button>
+                <button class="alignment-btn" data-align-h="left" data-align-v="bottom" title="Unten links">
+                  <i class="fas fa-arrow-down-left text-sm"></i>
+                </button>
+                <button class="alignment-btn" data-align-h="center" data-align-v="bottom" title="Unten mitte">
+                  <i class="fas fa-arrow-down text-sm"></i>
+                </button>
+                <button class="alignment-btn" data-align-h="right" data-align-v="bottom" title="Unten rechts">
+                  <i class="fas fa-arrow-down-right text-sm"></i>
+                </button>
+             </div>
+        </div>
+
+        <p class="text-xs text-slate-500 italic text-center py-4">Doppelklicken zum Bearbeiten, Klicken & Ziehen zum Verschieben.</p>
+    </div>
+  </aside>
+
+  <main class="flex-1 flex flex-col items-center justify-start p-4 lg:p-8">
+    <div class="step-progress">
+      <div id="step-progress-bar"></div>
+      <div id="step1" class="step"><div class="step-circle">1</div><div class="step-label">Inhalt & KI</div></div>
+      <div id="step2" class="step"><div class="step-circle">2</div><div class="step-label">Design</div></div>
+      <div id="step3" class="step"><div class="step-circle">3</div><div class="step-label">Vorschau & Export</div></div>
+    </div>
+
+    <div id="main-content-area" class="w-full mt-6">
+        <div id="step1-content" class="w-full max-w-6xl mx-auto">
+            <div class="text-center mb-8">
+                <h3 class="font-title font-black text-4xl mb-4 modern-gradient-text">Schritt 1: Gib der KI Futter</h3>
+                <p class="text-slate-600 max-w-2xl mx-auto">Lade deine Inhalte hoch und konfiguriere die Basics – die KI übernimmt den Rest.</p>
+            </div>
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                <div class="space-y-6">
+                    <div class="form-group">
+                        <label for="api-provider-select" class="block text-sm font-semibold mb-2">KI-Anbieter auswählen</label>
+                        <select id="api-provider-select" class="w-full input-field p-3">
+                            <option value="grok">Grok (xAI)</option>
+                            <option value="openai">OpenAI (GPT)</option>
+                            <option value="gemini">Google (Gemini)</option>
+                        </select>
+                    </div>
+                    <div id="api-key-container">
+                        <div id="grok-key-input-container">
+                            <div class="form-group">
+                                <label for="grok-api-key-input" class="block text-sm font-semibold mb-2">Dein Grok (xAI) API Key</label>
+                                <input type="password" id="grok-api-key-input" class="w-full input-field p-3 api-key-input" placeholder="xAI API Key">
+                            </div>
+                        </div>
+                        <div id="openai-key-input-container" class="hidden">
+                            <div class="form-group">
+                                <label for="openai-api-key-input" class="block text-sm font-semibold mb-2">Dein OpenAI API Key</label>
+                                <input type="password" id="openai-api-key-input" class="w-full input-field p-3 api-key-input" placeholder="OpenAI API Key (sk-...)">
+                            </div>
+                        </div>
+                        <div id="gemini-key-input-container" class="hidden">
+                            <div class="form-group">
+                                <label for="gemini-api-key-input" class="block text-sm font-semibold mb-2">Dein Google Gemini API Key</label>
+                                <input type="password" id="gemini-api-key-input" class="w-full input-field p-3 api-key-input" placeholder="Gemini API Key">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="moderator-name-input" class="block text-sm font-semibold mb-2">Dein Name / Moderator</label>
+                        <input type="text" id="moderator-name-input" class="w-full input-field p-3" placeholder="z.B. Ibrahim Mohamed">
+                    </div>
+                    <div class="form-group">
+                        <label for="webinar-name-input" class="block text-sm font-semibold mb-2">Name des Webinars</label>
+                        <input type="text" id="webinar-name-input" class="w-full input-field p-3" placeholder="z.B. Kettenbrecher Premium Training">
+                    </div>
+                    <div class="form-group">
+                        <label for="webinar-benefit-input" class="block text-sm font-semibold mb-2">Hauptbenefit des Webinars (in Zahlen)</label>
+                        <input type="text" id="webinar-benefit-input" class="w-full input-field p-3" placeholder="z.B. Wie du deine ersten 1000€ verdienst">
+                    </div>
+                    <div class="form-group">
+                        <label for="hero-story-upload" class="block text-sm font-semibold mb-2">1. Deine Heldenstory (TXT)</label>
+                        <input type="file" id="hero-story-upload" accept=".txt" class="input-file">
+                    </div>
+                    <div class="form-group">
+                        <label for="product-upload" class="block text-sm font-semibold mb-2">2. Deine Produktinfos & USP (TXT)</label>
+                        <input type="file" id="product-upload" accept=".txt" class="input-file">
+                    </div>
+                </div>
+                <div class="space-y-6">
+                    <div class="form-group">
+                        <label for="audience-upload" class="block text-sm font-semibold mb-2">3. Deine Zielgruppe (Probleme & Wünsche) (TXT)</label>
+                        <input type="file" id="audience-upload" accept=".txt" class="input-file">
+                    </div>
+                    <div class="form-group">
+                        <label for="faq-upload" class="block text-sm font-semibold mb-2">4. Einwände & FAQs (MD/TXT)</label>
+                        <input type="file" id="faq-upload" accept=".md,.txt" class="input-file">
+                    </div>
+                    <div class="form-group">
+                        <label class="block text-sm font-semibold mb-2">Anredeform</label>
+                        <div class="flex rounded-xl shadow-sm overflow-hidden">
+                            <button id="address-form-du" class="address-form-btn flex-1 px-4 py-3 text-sm font-medium border-r theme-btn" data-form="du">Du (informell)</button>
+                            <button id="address-form-sie" class="address-form-btn flex-1 px-4 py-3 text-sm font-medium theme-btn" data-form="sie">Sie (formell)</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="cta-input" class="block text-sm font-semibold mb-2">Call-To-Action (Webinar-Ziel)</label>
+                        <input type="text" id="cta-input" class="w-full input-field p-3" placeholder="z.B. Kauf meines Kurses 'XYZ'">
+                    </div>
+                     <div class="form-group">
+                        <label for="gift-promise-input" class="block text-sm font-semibold mb-2">Geschenkversprechen (für alle, die bleiben)</label>
+                        <input type="text" id="gift-promise-input" class="w-full input-field p-3" placeholder="z.B. eine exklusive PDF-Checkliste">
+                    </div>
+                    <div class="form-group">
+                        <label for="product-modules" class="block text-sm font-semibold mb-2">Produkt-Module (kommagetrennt)</label>
+                        <input type="text" id="product-modules" class="w-full input-field p-3" placeholder="Modul 1, Modul 2, ...">
+                    </div>
+                    <div class="form-group">
+                        <label for="bonus-info" class="block text-sm font-semibold mb-2">Bonus-Angebote (kommagetrennt)</label>
+                        <input type="text" id="bonus-info" class="w-full input-field p-3" placeholder="Bonus 1, Bonus 2, ...">
+                    </div>
+                    <div class="form-group">
+                        <label for="pricing-info" class="block text-sm font-semibold mb-2">Preisstaffelung (kommagetrennt)</label>
+                        <input type="text" id="pricing-info" class="w-full input-field p-3" placeholder="Gesamtwert, Rabattpreis 1, Endpreis">
+                    </div>
+                    <div class="form-group">
+                        <label for="guarantee-days" class="block text-sm font-semibold mb-2">Garantie</label>
+                        <select id="guarantee-days" class="w-full input-field p-3">
+                            <option value="0">Keine Garantie</option>
+                            <option value="14">14 Tage</option>
+                            <option value="30">30 Tage</option>
+                            <option value="60">60 Tage</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button id="go-to-step2-btn" class="w-full mt-12 cta-button py-4 px-8 text-xl font-semibold shadow-xl mx-auto block">
+              <i class="fas fa-arrow-right mr-3"></i> Weiter zu Schritt 2
+            </button>
+        </div>
+
+        <div id="preview-area" class="w-full flex flex-col items-center justify-center hidden relative">
+            <div id="slide-container" class="slide-container"></div>
+            <div class="flex items-center justify-center mt-8 space-x-3 lg:space-x-4 flex-wrap gap-2">
+                <button id="prev-slide" class="modern-gradient-bg text-white py-3 px-6 rounded-xl font-semibold transition-all duration-200 hover:scale-105 disabled:opacity-50 shadow-lg">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="bg-white px-4 py-2 rounded-xl shadow-md border">
+                  <input type="number" id="slide-number-input" min="1" class="w-20 text-center p-1 border-0 rounded input-field bg-transparent" value="1"> / <span id="total-slides" class="font-semibold">0</span>
+                </div>
+                <button id="next-slide" class="modern-gradient-bg text-white py-3 px-6 rounded-xl font-semibold transition-all duration-200 hover:scale-105 shadow-lg">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+                <button id="fullscreen-btn" class="modern-gradient-bg text-white py-3 px-6 rounded-xl font-semibold transition-all duration-200 hover:scale-105 shadow-lg">Vollbild</button>
+                <button id="download-script-btn" class="modern-gradient-bg text-white py-3 px-6 rounded-xl font-semibold transition-all duration-200 hover:scale-105 shadow-lg hidden">
+                  <i class="fas fa-file-word mr-1"></i> Skript (.doc)
+                </button>
+                <button id="download-pptx-btn" class="cta-button py-3 px-6 text-lg font-semibold shadow-lg">Export (.pptx)</button>
+            </div>
+            <div id="generation-status" class="hidden">
+                <div class="loader mx-auto mb-4"></div>
+                <p id="progress-text" class="text-sm text-slate-600 font-medium">Generiere Webinar...</p>
+            </div>
+        </div>
+    </div>
+  </main>
+
+  <div id="text-command-center">
+    <select id="font-family-select">
+      <option value="Inter">Inter</option>
+      <option value="Space Grotesk">Space Grotesk</option>
+    </select>
+    <input type="number" id="font-size-input" min="10" max="120" value="48" class="w-16">
+    <div id="single-color-controls">
+        <input type="color" id="font-color-input" value="#0f172a">
+    </div>
+    <div id="gradient-controls" class="hidden items-center">
+        <input type="color" id="gradient-color1" value="#6366f1">
+        <span>&rarr;</span>
+        <input type="color" id="gradient-color2" value="#a78bfa">
+    </div>
+    <button id="font-bold-btn" title="Fett"><i class="fas fa-bold"></i></button>
+    <button id="font-italic-btn" title="Kursiv"><i class="fas fa-italic"></i></button>
+  </div>
+
+  <div id="fullscreen-overlay" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden items-center justify-center p-4 cursor-pointer transition-all duration-300"></div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // --- STATE MANAGEMENT ---
+    let appState = {
+      currentStep: 1, webinarScript: [],
+      speakerNotes: [], currentSlideIndex: 0, 
+      apiProvider: 'grok', grokApiKey: '', openaiApiKey: '', geminiApiKey: '',
+      moderatorName: '', slideCount: 200, theme: 'light', logoUrl: '',
+      heroStoryContent: '', productContent: '', audienceContent: '', faqContent: '', productModules: [], bonusInfo: [], pricingInfo: [], guarantee: '',
+      giftPromise: '', callToAction: '', addressForm: 'du', webinarName: '', webinarBenefit: '',
+      elementPositions: {}, history: []
+    };
+
+    // --- DOM ELEMENT CACHING ---
+    const dom = {
+      sidebar: { step2Controls: document.getElementById('step2-controls'), step3Controls: document.getElementById('step3-controls'), slideCountSlider: document.getElementById('slide-count-slider'), slideCountDisplay: document.getElementById('slide-count-display'), themeLightBtn: document.getElementById('theme-light-btn'), themeDarkBtn: document.getElementById('theme-dark-btn'), logoUpload: document.getElementById('logo-upload'), logoX: document.getElementById('logo-x'), logoY: document.getElementById('logo-y'), logoSize: document.getElementById('logo-size'), undoBtn: document.getElementById('undo-btn'), alignmentControls: document.getElementById('alignment-controls') },
+      main: { step1Content: document.getElementById('step1-content'), previewArea: document.getElementById('preview-area'), slideContainer: document.getElementById('slide-container'), prevBtn: document.getElementById('prev-slide'), nextBtn: document.getElementById('next-slide'), slideNumberInput: document.getElementById('slide-number-input'), totalSlides: document.getElementById('total-slides'), generationStatus: document.getElementById('generation-status'), progressText: document.getElementById('progress-text'), fullscreenOverlay: document.getElementById('fullscreen-overlay') },
+      steps: { step1: document.getElementById('step1'), step2: document.getElementById('step2'), step3: document.getElementById('step3'), progressBar: document.getElementById('step-progress-bar') },
+      inputs: { 
+        apiProviderSelect: document.getElementById('api-provider-select'),
+        grokApiKey: document.getElementById('grok-api-key-input'),
+        openaiApiKey: document.getElementById('openai-api-key-input'),
+        geminiApiKey: document.getElementById('gemini-api-key-input'),
+        grokKeyContainer: document.getElementById('grok-key-input-container'),
+        openaiKeyContainer: document.getElementById('openai-key-input-container'),
+        geminiKeyContainer: document.getElementById('gemini-key-input-container'),
+        moderatorName: document.getElementById('moderator-name-input'), 
+        heroStory: document.getElementById('hero-story-upload'), product: document.getElementById('product-upload'), 
+        audience: document.getElementById('audience-upload'), faq: document.getElementById('faq-upload'), 
+        productModules: document.getElementById('product-modules'), bonusInfo: document.getElementById('bonus-info'), 
+        pricingInfo: document.getElementById('pricing-info'), guaranteeDays: document.getElementById('guarantee-days'), 
+        giftPromise: document.getElementById('gift-promise-input'), callToAction: document.getElementById('cta-input'), 
+        addressFormDu: document.getElementById('address-form-du'), addressFormSie: document.getElementById('address-form-sie'), 
+        webinarName: document.getElementById('webinar-name-input'), webinarBenefit: document.getElementById('webinar-benefit-input') 
+      },
+      buttons: { goToStep2: document.getElementById('go-to-step2-btn'), backToStep1: document.getElementById('back-to-step1-btn'), backToStep2: document.getElementById('back-to-step2-btn'), generateAndPreview: document.getElementById('generate-and-preview-btn'), downloadScript: document.getElementById('download-script-btn'), downloadPptx: document.getElementById('download-pptx-btn'), fullscreenBtn: document.getElementById('fullscreen-btn') },
+      textEditor: { 
+        commandCenter: document.getElementById('text-command-center'), 
+        fontFamily: document.getElementById('font-family-select'), 
+        fontSize: document.getElementById('font-size-input'), 
+        fontColor: document.getElementById('font-color-input'), 
+        boldBtn: document.getElementById('font-bold-btn'), 
+        italicBtn: document.getElementById('font-italic-btn'),
+        singleColorControls: document.getElementById('single-color-controls'),
+        gradientControls: document.getElementById('gradient-controls'),
+        gradientColor1: document.getElementById('gradient-color1'),
+        gradientColor2: document.getElementById('gradient-color2')
+      }
+    };
+
+    let activeTextElement = null;
+
+    // --- UNDO/HISTORY FUNCTIONS ---
+    const saveState = () => { appState.history.push(JSON.parse(JSON.stringify({ elementPositions: appState.elementPositions, webinarScript: appState.webinarScript }))); };
+    const undoLastAction = () => {
+      if (appState.history.length > 1) {
+        appState.history.pop();
+        const prev = appState.history[appState.history.length - 1];
+        appState.elementPositions = JSON.parse(JSON.stringify(prev.elementPositions));
+        appState.webinarScript = JSON.parse(JSON.stringify(prev.webinarScript));
+        renderSlide(appState.currentSlideIndex);
+        showToast('Letzte Aktion rückgängig gemacht', 'info');
+      } else {
+        showToast('Keine weiteren Aktionen zum Rückgängigmachen', 'info');
+      }
+    };
+
+    // --- HELPER FUNCTIONS ---
+    const escapeForPrompt = (str) => {
+      if (!str) return '';
+      return str.replace(/"/g, "'").replace(/\n/g, ' ').replace(/\r/g, '');
+    };
+    const readFileAsText = (file) => new Promise((resolve, reject) => {
+      if (!file) return resolve('');
+      const reader = new FileReader();
+      reader.onload = e => resolve(e.target.result);
+      reader.onerror = e => reject(e);
+      reader.readAsText(file);
+    });
+    const getImageUrl = (file) => new Promise((resolve) => {
+      if (!file) return resolve('');
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.readAsDataURL(file);
+    });
+    const showToast = (message, type = 'success', duration = 3000) => {
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.classList.add('show'), 10);
+      setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, duration);
+    };
+    const yieldToUI = () => new Promise(r => setTimeout(r, 0));
+    const rgbToHex = (rgb) => {
+      if (!rgb || !rgb.startsWith('rgb')) return rgb;
+      let sep = rgb.indexOf(',') > -1 ? ',' : ' ';
+      rgb = rgb.substr(4).split(')')[0].split(sep);
+      let r = (+rgb[0]).toString(16).padStart(2, '0');
+      let g = (+rgb[1]).toString(16).padStart(2, '0');
+      let b = (+rgb[2]).toString(16).padStart(2, '0');
+      return `#${r}${g}${b}`;
+    };
+
+    // --- UI FUNCTIONS ---
+    const updateApiProviderUI = () => {
+        const provider = dom.inputs.apiProviderSelect.value;
+        dom.inputs.grokKeyContainer.classList.add('hidden');
+        dom.inputs.openaiKeyContainer.classList.add('hidden');
+        dom.inputs.geminiKeyContainer.classList.add('hidden');
+        
+        document.querySelectorAll('.api-key-input').forEach(input => input.removeAttribute('required'));
+
+        if (provider === 'grok') {
+            dom.inputs.grokKeyContainer.classList.remove('hidden');
+            dom.inputs.grokApiKey.setAttribute('required', 'true');
+        } else if (provider === 'openai') {
+            dom.inputs.openaiKeyContainer.classList.remove('hidden');
+            dom.inputs.openaiApiKey.setAttribute('required', 'true');
+        } else if (provider === 'gemini') {
+            dom.inputs.geminiKeyContainer.classList.remove('hidden');
+            dom.inputs.geminiApiKey.setAttribute('required', 'true');
+        }
+    };
+
+    const toggleModalFullscreen = () => {
+      const overlay = dom.main.fullscreenOverlay;
+      const isVisible = !overlay.classList.contains('hidden');
+      if (isVisible) {
+        overlay.classList.add('hidden');
+        overlay.innerHTML = '';
+        dom.buttons.fullscreenBtn.innerHTML = 'Vollbild';
+      } else {
+        overlay.innerHTML = ''; // Clear previous content
+        const slideClone = dom.main.slideContainer.cloneNode(true);
+        slideClone.style.maxWidth = '95vw';
+        slideClone.style.maxHeight = 'calc(95vh - 20px)';
+        slideClone.style.width = 'auto';
+        slideClone.style.height = 'auto';
+        slideClone.style.cursor = 'default';
+        overlay.appendChild(slideClone);
+
+        const prevButton = document.createElement('button');
+        prevButton.innerHTML = '<i class="fas fa-chevron-left"></i>';
+        prevButton.className = 'absolute left-4 top-1/2 -translate-y-1/2 text-white bg-black bg-opacity-50 rounded-full w-12 h-12 text-xl z-10 hover:bg-opacity-75 disabled:opacity-25 transition-all duration-200';
+        if (appState.currentSlideIndex === 0) prevButton.disabled = true;
+        prevButton.onclick = () => {
+            if (appState.currentSlideIndex > 0) {
+                renderSlide(appState.currentSlideIndex - 1);
+                toggleModalFullscreen();
+                toggleModalFullscreen();
+            }
+        };
+
+        const nextButton = document.createElement('button');
+        nextButton.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        nextButton.className = 'absolute right-4 top-1/2 -translate-y-1/2 text-white bg-black bg-opacity-50 rounded-full w-12 h-12 text-xl z-10 hover:bg-opacity-75 disabled:opacity-25 transition-all duration-200';
+        if (appState.currentSlideIndex >= appState.webinarScript.length - 1) nextButton.disabled = true;
+        nextButton.onclick = (e) => {
+            e.stopPropagation();
+            if (appState.currentSlideIndex < appState.webinarScript.length - 1) {
+                renderSlide(appState.currentSlideIndex + 1);
+                // Refresh fullscreen view
+                toggleModalFullscreen();
+                toggleModalFullscreen();
+            }
+        };
+        
+        overlay.appendChild(prevButton);
+        overlay.appendChild(nextButton);
+
+        overlay.classList.remove('hidden');
+        dom.buttons.fullscreenBtn.innerHTML = '<i class="fas fa-compress mr-1"></i> Beenden';
+      }
+    };
+
+    const updateStepUI = () => {
+      const { currentStep } = appState;
+      dom.main.step1Content.classList.add('hidden');
+      dom.sidebar.step2Controls.classList.add('hidden');
+      dom.main.previewArea.classList.add('hidden');
+      dom.sidebar.step3Controls.classList.add('hidden');
+
+      if (currentStep === 1) dom.main.step1Content.classList.remove('hidden');
+      if (currentStep === 2) dom.sidebar.step2Controls.classList.remove('hidden');
+      if (currentStep === 3) { dom.main.previewArea.classList.remove('hidden'); dom.sidebar.step3Controls.classList.remove('hidden'); }
+
+      [1,2,3].forEach(i => dom.steps[`step${i}`].classList.remove('active', 'completed'));
+      for (let i = 1; i <= currentStep; i++) dom.steps[`step${i}`].classList.add(i < currentStep ? 'completed' : 'active');
+      dom.steps.progressBar.style.width = `${((currentStep - 1) / 2) * 80}%`;
+    };
+
+    const applyTheme = (theme) => {
+      appState.theme = theme;
+      dom.main.slideContainer.className = `slide-container theme-${theme}`;
+      dom.sidebar.themeLightBtn.classList.toggle('modern-gradient-bg', theme === 'light');
+      dom.sidebar.themeLightBtn.classList.toggle('text-white', theme === 'light');
+      dom.sidebar.themeLightBtn.classList.toggle('active', theme === 'light');
+      dom.sidebar.themeDarkBtn.classList.toggle('modern-gradient-bg', theme === 'dark');
+      dom.sidebar.themeDarkBtn.classList.toggle('text-white', theme === 'dark');
+      dom.sidebar.themeDarkBtn.classList.toggle('active', theme === 'dark');
+      if (appState.webinarScript.length > 0) renderSlide(appState.currentSlideIndex);
+    };
+    const applyAddressForm = (form) => {
+      appState.addressForm = form;
+      dom.inputs.addressFormDu.classList.toggle('modern-gradient-bg', form === 'du');
+      dom.inputs.addressFormDu.classList.toggle('text-white', form === 'du');
+      dom.inputs.addressFormDu.classList.toggle('active', form === 'du');
+      dom.inputs.addressFormSie.classList.toggle('modern-gradient-bg', form === 'sie');
+      dom.inputs.addressFormSie.classList.toggle('text-white', form === 'sie');
+      dom.inputs.addressFormSie.classList.toggle('active', form === 'sie');
+    };
+
+    // --- UNIVERSAL AI API CALLER ---
+    const callAiApi = async (prompt) => {
+        const provider = appState.apiProvider;
+        let apiKey, apiUrl, payload, headers;
+
+        const commonErrorHandler = (resp, txt) => {
+            if (resp.status === 401 || resp.status === 403) {
+                throw new Error(`Unauthorized/Forbidden: Prüfe deinen ${provider.toUpperCase()} Key & Modellzugriff. Details: ${txt}`);
+            }
+            if (resp.status === 429 || resp.status === 503) {
+                return 'retry'; // Signal to retry
+            }
+            throw new Error(`HTTP ${resp.status}: ${txt}`);
+        };
+
+        switch(provider) {
+            case 'grok':
+                apiKey = appState.grokApiKey;
+                if (!apiKey) throw new Error('Grok (xAI) API Key fehlt.');
+                apiUrl = 'https://api.x.ai/v1/chat/completions';
+                headers = { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' };
+                payload = { messages: [{ role: 'user', content: prompt }], model: 'grok-4-latest', response_format: { type: 'json_object' }, temperature: 0.7, max_tokens: 8192 };
+                break;
+            
+            case 'openai':
+                apiKey = appState.openaiApiKey;
+                if (!apiKey) throw new Error('OpenAI API Key fehlt.');
+                apiUrl = 'https://api.openai.com/v1/chat/completions';
+                headers = { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' };
+                payload = { messages: [{ role: 'user', content: prompt }], model: 'gpt-4-turbo', response_format: { type: 'json_object' }, temperature: 0.7, max_tokens: 4096 };
+                break;
+
+            case 'gemini':
+                apiKey = appState.geminiApiKey;
+                if (!apiKey) throw new Error('Google Gemini API Key fehlt.');
+                apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${apiKey}`;
+                headers = { 'Content-Type': 'application/json' };
+                payload = {
+                    contents: [{ parts: [{ text: prompt }] }],
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        temperature: 0.7,
+                        maxOutputTokens: 8192
+                    }
+                };
+                break;
+
+            default:
+                throw new Error(`Unbekannter KI-Anbieter: ${provider}`);
+        }
+
+        const maxRetries = 5;
+        for (let i = 0; i < maxRetries; i++) {
+            try {
+                const resp = await fetch(apiUrl, { method: 'POST', headers: headers, body: JSON.stringify(payload) });
+                
+                if (resp.ok) {
+                    const result = await resp.json();
+                    if (provider === 'grok') return result.choices?.[0]?.message?.content;
+                    if (provider === 'openai') return result.choices?.[0]?.message?.content;
+                    if (provider === 'gemini') return result.candidates?.[0]?.content?.parts?.[0]?.text;
+                }
+
+                const txt = await resp.text();
+                const errorResult = commonErrorHandler(resp, txt);
+                if (errorResult === 'retry') {
+                    const delay = Math.pow(2, i) * 2000;
+                    dom.main.progressText.textContent = `API überlastet (Fehler ${resp.status}). Nächster Versuch in ${Math.round(delay/1000)}s...`;
+                    await new Promise(res => setTimeout(res, delay));
+                    continue;
+                }
+            } catch (e) {
+                if (i === maxRetries - 1) throw e;
+                const delay = Math.pow(2, i) * 2000;
+                dom.main.progressText.textContent = `Netzwerkfehler. Nächster Versuch in ${Math.round(delay/1000)}s...`;
+                await new Promise(res => setTimeout(res, delay));
+            }
+        }
+        throw new Error('API-Anfrage nach mehreren Versuchen fehlgeschlagen.');
+    };
+
+    // --- GENERATION LOGIC ---
+    const generateWebinar = async () => {
+      appState.currentStep = 3; updateStepUI();
+      dom.main.generationStatus.classList.remove('hidden');
+      dom.main.slideContainer.classList.add('slide-hidden');
+      document.querySelectorAll('#preview-area > .flex').forEach(el => el.classList.add('hidden'));
+      dom.buttons.generateAndPreview.disabled = true;
+
+      let allSlides = [];
+      let allSpeakerNotes = [];
+      const totalSlideCount = appState.slideCount;
+
+      const webinarStructure = [
+          { name: "Phase 1: Einstieg, Fokus & Geschenk-Teaser", percentage: 0.05, instructions: `Erstelle die Willkommensfolie. Fordere die Teilnehmer im Sprechtext energisch auf, ALLE Ablenkungen (Handy, Social Media, Tabs) zu eliminieren. Teasere DANACH das exklusive Geschenk an, das nur für Teilnehmer am Ende verfügbar ist, ohne es zu benennen. Wecke massive Neugier und betone, dass Konzentration entscheidend ist, um nichts zu verpassen.` },
+          { name: "Phase 2: Helden-Story", percentage: 0.20, instructions: `Erzähle die emotionale 'Asche zu Phönix'-Geschichte des Moderators basierend auf dem Heldenstory-Dokument. Baue eine starke emotionale Verbindung auf. Die Folien sollen nur starke Bilder und prägnante Headlines enthalten, der Hauptinhalt liegt im Sprechtext.` },
+          { name: "Phase 3: Awareness & einfache Prinzipien", percentage: 0.25, instructions: `Hebe die Zielgruppe von Awareness-Stufe 0 an. Erkläre grundlegende Business-Prinzipien (z.B. '1€ rein, 2€ raus'-Prinzip, wie man Zielgruppen findet) mit extrem einfachen Metaphern und visuellen Skizzen (Strichmännchen, simple Grafiken). Der Sprechtext muss alles so erklären, als wäre es für einen absoluten Anfänger.` },
+          { name: "Phase 4: Überleitung & Produktvorstellung", percentage: 0.15, instructions: `Schlage die Brücke von den allgemeinen Prinzipien zur konkreten Lösung: dem Produkt. Präsentiere das Produkt als den logischen, unausweichlichen nächsten Schritt. Stelle die einzelnen Module vor: ${appState.productModules.join(', ')}. Jedes Modul muss als Lösung für ein spezifisches Problem der Zielgruppe dargestellt werden.` },
+          { name: "Phase 5: Wert-Stapelung & Testimonials", percentage: 0.15, instructions: `Gehe jedes Modul einzeln durch und erkläre den Wert im Sprechtext. Fasse am Ende den Gesamtwert des Angebots zusammen. Zeige überzeugende Testimonials auf den Folien, um soziales Vertrauen (Social Proof) aufzubauen.` },
+          { name: "Phase 6: Emotionale Verstärkung & Bonus-Enthüllung", percentage: 0.10, instructions: `Erinnere die Zielgruppe an ihre Schmerzpunkte und warum sie hier sind ('Für wen machst du das?'). Male ein klares Bild der möglichen Transformation. Enthülle DANN das geheime Geschenk ('${escapeForPrompt(appState.giftPromise)}') als exklusiven Bonus für die heutigen Käufer und hype es als extrem wertvoll.` },
+          { name: "Phase 7: Preis & Call-to-Action", percentage: 0.05, instructions: `Präsentiere die Preisstaffelung [${appState.pricingInfo.join(', ')}] schrittweise (Gesamtwert -> Rabatt -> Endpreis). Erwähne die Garantie ('${escapeForPrompt(appState.guarantee)}'). Gib einen klaren, unmissverständlichen und wiederholten Call-to-Action ('${escapeForPrompt(appState.callToAction)}').` },
+          { name: "Phase 8: FAQ & Abschluss", percentage: 0.05, instructions: `Behandle die häufigsten Einwände und Fragen aus den FAQs, um letzte Zweifel auszuräumen. Wiederhole den Call-to-Action mehrmals mit steigender Dringlichkeit. Bedanke dich und zeige eine Abschlussfolie.` }
+      ];
+      
+      const processSingleSection = async (section, sectionNum, totalSections) => {
+          const sectionSlideCount = Math.max(2, Math.round(totalSlideCount * section.percentage));
+          dom.main.progressText.textContent = `Generiere Phase ${sectionNum}/${totalSections}: ${section.name}...`;
+
+          const prompt = `
+            **PERSPEKTIVE & STIL:** Schreibe im energiegeladenen, direkten und überzeugenden Stil von Said Shiripour. Nutze die Ich-Perspektive des Moderators (${escapeForPrompt(appState.moderatorName)}). Verwende die **${appState.addressForm === 'du' ? 'informelle "Du"-Form' : 'formellen "Sie"-Form'}**.
+            **WICHTIGSTE REGEL:** Deine GESAMTE Antwort MUSS AUSSCHLIESSLICH ein einziges, 100% valides JSON-Objekt sein. Kein einleitender Text, kein Markdown. Nur das JSON.
+            **FOLIENREGELN:** Folien enthalten nur prägnante Headlines, Sub-Headlines und Platzhalter für Bilder. Wenige, schlagkräftige Bullet Points sind erlaubt. Der meiste Text gehört in den Sprechtext.
+            **JSON-SCHEMA:** Das Objekt muss die Form { "slides": [...], "speakerNotes": [...] } haben.
+            * Jedes Objekt im 'slides'-Array MUSS diesem Schema folgen: { "type": "string", "layout": "string", "content": { "title": "string", "subtitle": "string", "points": ["string"] }, "image_prompt": "string" }.
+            * Das 'speakerNotes'-Array muss die gleiche Anzahl an Elementen wie 'slides' haben. Der Sprechtext muss ausführlich, emotional und verkaufspsychologisch optimiert sein.
+            * Benutze IMMER doppelte Anführungszeichen (").
+
+            **AUFTRAG:** Erstelle die Webinar-Sektion "${section.name}".
+            **FOKUS:** ${section.instructions}
+            **ANZAHL FOLIEN:** ca. ${sectionSlideCount} Folien.
+            
+            **KONTEXT:**
+            * Moderator: "${escapeForPrompt(appState.moderatorName)}"
+            * Webinar-Name: "${escapeForPrompt(appState.webinarName)}"
+            * Heldenstory: "${escapeForPrompt(appState.heroStoryContent)}"
+            * Produkt: "${escapeForPrompt(appState.productContent)}"
+            * Zielgruppe (Probleme & Wünsche): "${escapeForPrompt(appState.audienceContent)}"
+            * FAQs & Einwände: "${escapeForPrompt(appState.faqContent)}"
+          `;
+        
+          const jsonString = await callAiApi(prompt);
+          
+          try {
+              if (!jsonString) throw new Error(`Leere Antwort von der KI für Sektion "${section.name}".`);
+
+              let cleanJsonString = jsonString.replace(/^```json\s*/, '').replace(/```$/, '').trim();
+              
+              // JSON Sanitizer
+              cleanJsonString = cleanJsonString.replace(/}(?=\s*"{)/g, '},"{'); // Fix missing commas between objects starting with quotes
+              cleanJsonString = cleanJsonString.replace(/}(?=\s*\{)/g, '},{'); // Fix missing commas between objects
+              
+              const firstBracket = cleanJsonString.indexOf('{');
+              const lastBracket = cleanJsonString.lastIndexOf('}');
+              if (firstBracket === -1 || lastBracket <= firstBracket) {
+                  throw new Error(`Kein valides JSON-Objekt in der KI-Antwort für Sektion "${section.name}" gefunden.`);
+              }
+              cleanJsonString = cleanJsonString.substring(firstBracket, lastBracket + 1);
+              
+              const pkg = JSON.parse(cleanJsonString);
+              
+              if (!Array.isArray(pkg.slides) || !Array.isArray(pkg.speakerNotes)) {
+                throw new Error(`Ungültiges Datenformat in Sektion "${section.name}". Die Schlüssel 'slides' oder 'speakerNotes' fehlen oder sind keine Arrays.`);
+              }
+              
+              allSlides.push(...pkg.slides);
+              allSpeakerNotes.push(...pkg.speakerNotes);
+          } catch(e) {
+              console.error(`Fehler beim Verarbeiten der Sektion "${section.name}":`, e);
+              console.error("Roh-Antwort von der KI:", jsonString);
+              showToast(`Warnung: Sektion "${section.name}" konnte nicht generiert werden. Überspringe...`, 'error', 5000);
+          }
+      };
+
+      try {
+        const delay = ms => new Promise(res => setTimeout(res, ms));
+
+        if (appState.apiProvider === 'gemini') {
+            const batchSize = 2;
+            const numBatches = Math.ceil(webinarStructure.length / batchSize);
+            for (let i = 0; i < webinarStructure.length; i += batchSize) {
+                const batch = webinarStructure.slice(i, i + batchSize);
+                let promptForBatch = "";
+                
+                const batchNumber = (i / batchSize) + 1;
+                dom.main.progressText.textContent = `Generiere Batch ${batchNumber}/${numBatches} (Phasen ${i+1}-${Math.min(i+batchSize, webinarStructure.length)})...`;
+
+                for(const section of batch) {
+                    const sectionSlideCount = Math.max(2, Math.round(totalSlideCount * section.percentage));
+                    promptForBatch += `\n\n--- NÄCHSTE SEKTION ---\n**SEKTION NAME:** "${section.name}"\n**FOKUS:** ${section.instructions}\n**ANZAHL FOLIEN:** ca. ${sectionSlideCount} Folien.\n`;
+                }
+                 const fullPrompt = `
+                    **PERSPEKTIVE & STIL:** Schreibe im energiegeladenen, direkten und überzeugenden Stil von Said Shiripour. Nutze die Ich-Perspektive des Moderators (${escapeForPrompt(appState.moderatorName)}). Verwende die **${appState.addressForm === 'du' ? 'informelle "Du"-Form' : 'formellen "Sie"-Form'}**.
+                    **ALLERWICHTIGSTE REGEL:** Deine GESAMTE Antwort MUSS AUSSCHLIESSLICH ein einziges, 100% valides JSON-Objekt sein. Das JSON-Objekt MUSS die Form { "sections": [ { "section_name": "...", "slides": [...], "speakerNotes": [...] }, ... ] } haben. Die Arrays 'slides' und 'speakerNotes' MÜSSEN für jede Sektion vorhanden sein. Kein einleitender Text, kein Markdown. Nur das JSON.
+                    **FOLIENREGELN:** Folien enthalten nur prägnante Headlines, Sub-Headlines und Platzhalter für Bilder. Wenige, schlagkräftige Bullet Points sind erlaubt. Der meiste Text gehört in den Sprechtext.
+                    **AUFTRAG:** Erstelle die folgenden Webinar-Sektionen in einem einzigen JSON-Objekt.
+                    ${promptForBatch}
+                    **KONTEXT:** Moderator: "${escapeForPrompt(appState.moderatorName)}", Webinar-Name: "${escapeForPrompt(appState.webinarName)}", Heldenstory: "${escapeForPrompt(appState.heroStoryContent)}", Produkt: "${escapeForPrompt(appState.productContent)}", Zielgruppe: "${escapeForPrompt(appState.audienceContent)}", FAQs: "${escapeForPrompt(appState.faqContent)}"
+                 `;
+
+                const jsonString = await callAiApi(fullPrompt);
+                try {
+                    if (!jsonString) throw new Error(`Leere Antwort von der KI für Batch ${batchNumber}.`);
+                    let cleanJsonString = jsonString.replace(/^```json\s*/, '').replace(/```$/, '').trim();
+                    const pkg = JSON.parse(cleanJsonString);
+
+                    if (!pkg.sections || !Array.isArray(pkg.sections)) throw new Error('Invalides Batch-Format von der KI. Der Schlüssel "sections" fehlt.');
+
+                    for (const sectionResult of pkg.sections) {
+                         if (!Array.isArray(sectionResult.slides) || !Array.isArray(sectionResult.speakerNotes)) {
+                            throw new Error(`Ungültiges Datenformat in Sektion "${sectionResult.section_name}".`);
+                         }
+                        allSlides.push(...sectionResult.slides);
+                        allSpeakerNotes.push(...sectionResult.speakerNotes);
+                    }
+                } catch(e) {
+                    console.error(`Fehler beim Verarbeiten von Batch ${batchNumber}:`, e);
+                    console.error("Roh-Antwort von der KI:", jsonString);
+                    showToast(`Warnung: Batch ${batchNumber} konnte nicht generiert werden. Überspringe...`, 'error', 5000);
+                }
+                
+                if (i + batchSize < webinarStructure.length) {
+                    await delay(3000); // 3 Sekunden Pause zwischen Batches
+                }
+            }
+        } else {
+            // Original-Logik für Grok und OpenAI
+            for (let i = 0; i < webinarStructure.length; i++) {
+                await processSingleSection(webinarStructure[i], i + 1, webinarStructure.length);
+                await yieldToUI();
+            }
+        }
+
+        appState.webinarScript = allSlides; 
+        appState.speakerNotes = allSpeakerNotes; 
+        appState.history = [];
+        saveState();
+        dom.buttons.downloadScript.classList.remove('hidden');
+        renderSlide(0);
+        showToast(`Webinar mit ${allSlides.length} Folien erfolgreich generiert!`, 'success');
+
+      } catch (e) {
+        console.error('Generation Fehler', e);
+        showToast(`Generierung fehlgeschlagen: ${e.message}`, 'error');
+        appState.currentStep = 2; updateStepUI();
+      } finally {
+        dom.main.generationStatus.classList.add('hidden');
+        dom.main.slideContainer.classList.remove('slide-hidden');
+        document.querySelectorAll('#preview-area > .flex').forEach(el => el.classList.remove('hidden'));
+        dom.buttons.generateAndPreview.disabled = false;
+      }
+    };
+
+    // --- RENDER & DRAG ---
+    const renderSlide = (index, targetContainer = dom.main.slideContainer) => {
+      if (!appState.webinarScript.length) return;
+      if (targetContainer === dom.main.slideContainer) appState.currentSlideIndex = index;
+      const slideData = appState.webinarScript[index];
+      if (!slideData) { console.error(`Keine Foliendaten für Index ${index}`); return; }
+
+      targetContainer.innerHTML = '';
+      targetContainer.className = `slide-container theme-${appState.theme}`;
+      const wrapper = document.createElement('div'); 
+      wrapper.className = 'slide-content-wrapper p-8';
+      
+      const slidePositions = appState.elementPositions[index] || {};
+      const content = slideData.content || {};
+
+      const logoContainer = document.createElement('div');
+      logoContainer.className = 'slide-logo draggable';
+      logoContainer.dataset.key = 'logo';
+      const logoPos = slidePositions.logo?.position;
+      logoContainer.style.left = logoPos?.left || `${dom.sidebar.logoX.value}%`;
+      logoContainer.style.top = logoPos?.top || `${dom.sidebar.logoY.value}%`;
+      logoContainer.style.width = logoPos?.width || `${dom.sidebar.logoSize.value}%`;
+      if (appState.logoUrl) logoContainer.innerHTML = `<img src="${appState.logoUrl}" alt="Logo">`;
+      targetContainer.appendChild(logoContainer);
+
+      const footer = document.createElement('div');
+      footer.className = 'slide-footer';
+      footer.innerHTML = `<i class="fas fa-circle mr-1"></i> ${index + 1}`;
+      targetContainer.appendChild(footer);
+
+      const layout = slideData.layout || 'default';
+      let mainContentArea;
+
+      if (layout.startsWith('split')) {
+        mainContentArea = document.createElement('div');
+        mainContentArea.className = 'flex w-full h-full gap-8 items-center';
+        const textContainer = document.createElement('div');
+        textContainer.className = 'w-1/2 flex flex-col justify-center text-left slide-text-container';
+        const imageContainer = document.createElement('div');
+        imageContainer.className = 'w-1/2 h-4/5 flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-xl border-2 border-dashed border-slate-300 p-6 text-center text-sm text-slate-500 backdrop-filter blur(5px)';
+        imageContainer.innerHTML = `<i class="fas fa-image text-4xl mb-2 text-slate-400"></i><br>${slideData.image_prompt || 'Bild-Platzhalter'}`;
+        
+        if (layout === 'split_left_text') {
+          mainContentArea.appendChild(textContainer);
+          mainContentArea.appendChild(imageContainer);
+        } else {
+          mainContentArea.appendChild(imageContainer);
+          mainContentArea.appendChild(textContainer);
+        }
+        wrapper.appendChild(mainContentArea);
+      } else {
+        mainContentArea = document.createElement('div');
+        mainContentArea.className = 'flex flex-col text-center w-full h-full gap-4';
+        const alignment = slidePositions.main?.alignment || { h: 'center', v: 'center'};
+        mainContentArea.style.justifyContent = 'flex-start'; // Always start from top
+        mainContentArea.style.alignItems = 'stretch'; // Take full width
+        wrapper.appendChild(mainContentArea);
+      }
+
+      const textTarget = layout.startsWith('split') ? mainContentArea.querySelector('.slide-text-container') : mainContentArea;
+
+      ['title', 'subtitle', 'points'].forEach(key => {
+        if(content[key]) {
+            const elData = {
+                title: { tag: 'h1', baseClass: 'draggable font-title text-5xl font-black modern-gradient-text mb-4' },
+                subtitle: { tag: 'h2', baseClass: 'draggable text-3xl mt-4 font-medium text-slate-600 dark:text-slate-300' },
+                points: { tag: 'ul', baseClass: 'draggable mt-8 space-y-4 max-w-3xl mx-auto' }
+            };
+
+            const el = document.createElement(elData[key].tag);
+            el.className = elData[key].baseClass;
+            el.dataset.key = key;
+
+            if (key === 'points' && Array.isArray(content.points)) {
+                 const items = content.points.map(p => `<li class="flex items-start bg-white/80 dark:bg-slate-800/80 p-3 rounded-lg shadow-sm"><span class="text-2xl mr-3 mt-0.5" style="color: var(--brand-primary);">&check;</span><span class="text-lg">${p}</span></li>`).join('');
+                 el.innerHTML = items;
+            } else if (key !== 'points') {
+                el.innerHTML = content[key];
+            }
+
+            const storedStyles = slidePositions[key]?.styles || {};
+            Object.assign(el.style, storedStyles);
+
+            // Handle font weight from stored styles via class
+            if(el.tagName === 'H1') {
+                if (storedStyles.fontWeight === '900' || storedStyles.fontWeight === 'bold') el.classList.add('font-black');
+                else if (storedStyles.fontWeight === 'normal') el.classList.remove('font-black');
+            }
+            
+            // Set initial alignment if not manually positioned
+             if (!slidePositions[key]?.position) {
+                el.style.position = 'relative';
+                // Apply default alignment here if needed, e.g., center text for non-split layouts
+                if (!layout.startsWith('split')) {
+                    el.style.margin = '0 auto'; // Horizontal centering
+                }
+            } else {
+                el.style.position = 'absolute';
+                Object.assign(el.style, slidePositions[key].position);
+            }
+
+            if (el.style.position === 'absolute') {
+                 wrapper.appendChild(el);
+            } else {
+                 textTarget.appendChild(el);
+            }
+        }
+      });
+      
+      targetContainer.appendChild(wrapper);
+
+      if (targetContainer === dom.main.slideContainer) {
+        targetContainer.querySelectorAll('.draggable').forEach(el => makeDraggable(el));
+        updateSlideControls(index);
+      }
+    };
+
+    const makeDraggable = (element) => {
+        let isDragging = false;
+        let dragInitiated = false;
+        let startX = 0, startY = 0, startLeft = 0, startTop = 0;
+
+        const dragMouseDown = (e) => {
+            if (e.button !== 0 || e.target.isContentEditable) return;
+            
+            startX = e.clientX;
+            startY = e.clientY;
+            startLeft = element.offsetLeft;
+            startTop = element.offsetTop;
+            dragInitiated = true;
+
+            document.addEventListener('mousemove', elementDrag);
+            document.addEventListener('mouseup', closeDragElement);
+        };
+
+        const elementDrag = (e) => {
+            if (!dragInitiated) return;
+            e.preventDefault();
+
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+
+            if (!isDragging && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+                isDragging = true;
+                saveState();
+                
+                if (window.getComputedStyle(element).position !== 'absolute') {
+                    const rect = element.getBoundingClientRect();
+                    const parentRect = element.offsetParent.getBoundingClientRect();
+                    element.style.position = 'absolute';
+                    element.style.width = `${rect.width}px`;
+                    element.style.transform = 'none';
+                    element.style.margin = '0';
+                    startLeft = rect.left - parentRect.left;
+                    startTop = rect.top - parentRect.top;
+                }
+            }
+
+            if (isDragging) {
+                const parentRect = element.offsetParent.getBoundingClientRect();
+                let newLeft = startLeft + dx;
+                let newTop = startTop + dy;
+
+                // Boundary Enforcement
+                newLeft = Math.max(0, Math.min(newLeft, parentRect.width - element.offsetWidth));
+                newTop = Math.max(0, Math.min(newTop, parentRect.height - element.offsetHeight));
+
+                element.style.left = `${newLeft}px`;
+                element.style.top = `${newTop}px`;
+            }
+        };
+
+        const closeDragElement = () => {
+            if (isDragging) {
+                const slideIndex = appState.currentSlideIndex;
+                const key = element.dataset.key;
+                if (!appState.elementPositions[slideIndex]) appState.elementPositions[slideIndex] = {};
+                if (!appState.elementPositions[slideIndex][key]) appState.elementPositions[slideIndex][key] = {};
+                
+                // CORE FIX: Convert final pixel position to percentage before saving
+                const parentRect = element.offsetParent.getBoundingClientRect();
+                const leftPercent = (parseFloat(element.style.left) / parentRect.width) * 100;
+                const topPercent = (parseFloat(element.style.top) / parentRect.height) * 100;
+
+                appState.elementPositions[slideIndex][key].position = {
+                    left: `${leftPercent}%`,
+                    top: `${topPercent}%`,
+                    width: element.style.width,
+                    height: `${element.offsetHeight}px`,
+                    transform: 'none' // Reset transform after drag, alignment tools will set it
+                };
+            }
+            
+            isDragging = false;
+            dragInitiated = false;
+            document.removeEventListener('mousemove', elementDrag);
+            document.removeEventListener('mouseup', closeDragElement);
+        };
+
+        element.addEventListener('mousedown', dragMouseDown);
+    };
+
+    const updateSlideControls = (index) => {
+      dom.main.slideNumberInput.value = index + 1;
+      dom.main.totalSlides.textContent = appState.webinarScript.length;
+      dom.main.prevBtn.disabled = index === 0;
+      dom.main.nextBtn.disabled = index >= appState.webinarScript.length - 1;
+    };
+
+    // --- EXPORT FUNCTIONS ---
+    const downloadScriptAsDoc = () => {
+      if (!appState.speakerNotes.length) return showToast('Kein Skript zum Herunterladen vorhanden.', 'error');
+      let scriptContent = `<h1>Webinar-Skript für ${appState.moderatorName}</h1>`;
+      appState.speakerNotes.forEach((note, i) => { 
+        const slideTitle = appState.webinarScript[i]?.content?.title || `Folie ${i+1}`;
+        scriptContent += `<br><hr><br><h2>${slideTitle}</h2><p>${note}</p>`; 
+      });
+      const sourceHTML = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Webinar Skript</title></head><body>${scriptContent}</body></html>`;
+      const a = document.createElement('a'); a.href = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML); a.download = 'webinar-skript.doc'; document.body.appendChild(a); a.click(); a.remove();
+    };
+
+    const downloadPptx = async () => {
+      if (!window.PptxGenJS) return showToast('Export-Bibliothek (PptxGenJS) nicht geladen.', 'error');
+      if (!appState.webinarScript.length) return showToast('Bitte zuerst ein Webinar generieren.', 'error');
+      dom.buttons.downloadPptx.disabled = true; dom.buttons.downloadPptx.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Exportiere...';
+
+      const pptx = new PptxGenJS(); pptx.layout = 'LAYOUT_16x9';
+      const W = 10, H = 5.625;
+      
+      for (let i = 0; i < appState.webinarScript.length; i++) {
+        const slideData = appState.webinarScript[i];
+        const s = pptx.addSlide(); s.background = { color: appState.theme === 'dark' ? '0f172a' : 'FFFFFF' };
+        const c = slideData.content || {};
+        const layout = slideData.layout || 'default';
+
+        const textDefaults = { fontFace: 'Inter', color: appState.theme === 'dark' ? 'F8FAFC' : '0F172A' };
+        const titleDefaults = { fontFace: 'Space Grotesk', bold: true, color: '6366f1' };
+
+        if (layout.startsWith('split')) {
+          const isTextLeft = layout === 'split_left_text';
+          const textX = isTextLeft ? 0.5 : 5.2;
+          const imageX = isTextLeft ? 5.2 : 0.5;
+
+          if (c.title) s.addText(c.title, { x: textX, y: 1.5, w: 4.3, h: 1, align: 'left', fontSize: 28, ...titleDefaults });
+          if (c.subtitle) s.addText(c.subtitle, { x: textX, y: 2.5, w: 4.3, h: 1, align: 'left', fontSize: 18, color: appState.theme === 'dark' ? 'CBD5E1' : '64748B' });
+          if (Array.isArray(c.points)) s.addText(c.points.join('\n'), { x: textX, y: 3.0, w: 4.3, h: 2, fontSize: 14, ...textDefaults, bullet:{type:'char', char:'✔', style:{color:'6366f1'}} });
+          
+          s.addShape(pptx.ShapeType.rect, { x: imageX, y: 1, w: 4.3, h: 3.6, fill: { color: 'F1F5F9' } });
+          s.addText(slideData.image_prompt || 'Bild hier einfügen', { x: imageX, y: 1, w: 4.3, h: 3.6, align: 'center', valign: 'middle', color: '888888', fontSize: 12 });
+        } else {
+          if (c.title) s.addText(c.title, { x: 0.5, y: 1.5, w: 9, h: 1, align: 'center', fontSize: 36, ...titleDefaults });
+          if (c.subtitle) s.addText(c.subtitle, { x: 0.5, y: 2.5, w: 9, h: 1, align: 'center', fontSize: 24, color: appState.theme === 'dark' ? 'CBD5E1' : '64748B' });
+          if (Array.isArray(c.points)) s.addText(c.points.join('\n'), { x: 1.5, y: 3.0, w: 7, h: 2, fontSize: 18, ...textDefaults, align: 'center', bullet:{type:'char', char:'✔', style:{color:'6366f1'}} });
+        }
+
+        const logoOpts = { x: (parseFloat(dom.sidebar.logoX.value)/100)*W, y: (parseFloat(dom.sidebar.logoY.value)/100)*H, w: (parseFloat(dom.sidebar.logoSize.value)/100)*(W*0.3) };
+        if (appState.logoUrl) s.addImage({ data: appState.logoUrl, ...logoOpts });
+        
+        s.addText(`${i+1}`, { x: 9.5, y: 5.2, w: 0.4, h: 0.3, fontSize: 10, color: '888888', align: 'right' });
+        if (i > 0 && i % 25 === 0) await yieldToUI();
+      }
+
+      try {
+        await pptx.writeFile({ fileName: `${appState.moderatorName || 'Webinar'}-Praesentation.pptx` });
+        showToast('PPTX-Datei erfolgreich exportiert!', 'success');
+      } catch (err) {
+        console.error('PPTX Export Fehler:', err); showToast(`Export fehlgeschlagen: ${err.message}`, 'error');
+      } finally {
+        dom.buttons.downloadPptx.disabled = false; dom.buttons.downloadPptx.innerHTML = 'Export (.pptx)';
+      }
+    };
+
+    // --- TEXT EDITOR & ALIGNMENT ---
+    const showTextEditor = (el) => {
+      activeTextElement = el; 
+      const rect = el.getBoundingClientRect(); 
+      const editor = dom.textEditor.commandCenter;
+      editor.style.top = `${window.scrollY + rect.top - editor.offsetHeight - 10}px`; 
+      editor.style.left = `${window.scrollX + rect.left + (rect.width/2) - (editor.offsetWidth/2)}px`; 
+      editor.classList.add('show');
+      
+      dom.sidebar.alignmentControls.classList.remove('hidden');
+
+      dom.textEditor.fontFamily.value = el.style.fontFamily.replace(/\"/g, '') || 'Inter';
+      dom.textEditor.fontSize.value = parseInt(el.style.fontSize) || 48;
+
+      if (el.classList.contains('modern-gradient-text')) {
+        dom.textEditor.singleColorControls.classList.add('hidden');
+        dom.textEditor.gradientControls.classList.remove('hidden');
+      } else {
+        dom.textEditor.singleColorControls.classList.remove('hidden');
+        dom.textEditor.gradientControls.classList.add('hidden');
+        dom.textEditor.fontColor.value = rgbToHex(el.style.color || '#0f172a');
+      }
+    };
+    const hideTextEditor = () => { 
+        dom.textEditor.commandCenter.classList.remove('show'); 
+        dom.sidebar.alignmentControls.classList.add('hidden');
+        activeTextElement = null; 
+    };
+    const applyTextStyle = (style, value) => {
+      if (!activeTextElement) return; saveState(); 
+      
+      const isGradientControl = style.startsWith('gradient');
+
+      if (style === 'color' && activeTextElement.classList.contains('modern-gradient-text')) {
+        activeTextElement.classList.remove('modern-gradient-text');
+        activeTextElement.style.background = 'none';
+        activeTextElement.style.webkitBackgroundClip = 'initial';
+        activeTextElement.style.webkitTextFillColor = 'initial';
+      }
+      
+      if (isGradientControl) {
+        if (!activeTextElement.classList.contains('modern-gradient-text')) {
+            activeTextElement.classList.add('modern-gradient-text');
+            activeTextElement.style.color = 'transparent';
+        }
+        const color1 = dom.textEditor.gradientColor1.value;
+        const color2 = dom.textEditor.gradientColor2.value;
+        const newGradient = `linear-gradient(135deg, ${color1} 0%, ${color2} 100%)`;
+        activeTextElement.style.background = newGradient;
+        activeTextElement.style.webkitBackgroundClip = 'text';
+        activeTextElement.style.webkitTextFillColor = 'transparent';
+      } else {
+         activeTextElement.style[style] = value;
+      }
+
+      const slideIndex = appState.currentSlideIndex; const key = activeTextElement.dataset.key;
+      if (!appState.elementPositions[slideIndex]) appState.elementPositions[slideIndex] = {};
+      if (!appState.elementPositions[slideIndex][key]) appState.elementPositions[slideIndex][key] = {};
+      if (!appState.elementPositions[slideIndex][key].styles) appState.elementPositions[slideIndex][key].styles = {};
+      
+      if(isGradientControl) {
+          appState.elementPositions[slideIndex][key].styles['background'] = activeTextElement.style.background;
+      } else {
+          appState.elementPositions[slideIndex][key].styles[style] = value;
+      }
+    };
+
+    const applyAlignment = (h, v) => {
+        if (!activeTextElement) return;
+        saveState();
+
+        const slideIndex = appState.currentSlideIndex;
+        const key = activeTextElement.dataset.key;
+        
+        // Ensure the element is absolutely positioned for this to work
+        if (window.getComputedStyle(activeTextElement).position !== 'absolute') {
+            const rect = activeTextElement.getBoundingClientRect();
+            const parentRect = activeTextElement.offsetParent.getBoundingClientRect();
+            activeTextElement.style.position = 'absolute';
+            activeTextElement.style.left = `${rect.left - parentRect.left}px`;
+            activeTextElement.style.top = `${rect.top - parentRect.top}px`;
+            activeTextElement.style.width = `${rect.width}px`;
+        }
+
+        let left = 'auto', top = 'auto', transform = '';
+        
+        if (h === 'left') { left = '5%'; transform += 'translateX(0%)'; }
+        if (h === 'center') { left = '50%'; transform += 'translateX(-50%)'; }
+        if (h === 'right') { left = '95%'; transform += 'translateX(-100%)'; }
+
+        if (v === 'top') { top = '10%'; transform += ' translateY(0%)'; }
+        if (v === 'center') { top = '50%'; transform += ' translateY(-50%)'; }
+        if (v === 'bottom') { top = '90%'; transform += ' translateY(-100%)'; }
+
+        activeTextElement.style.left = left;
+        activeTextElement.style.top = top;
+        activeTextElement.style.transform = transform.trim();
+        
+        // Store the exact position and transform
+        if (!appState.elementPositions[slideIndex]) appState.elementPositions[slideIndex] = {};
+        if (!appState.elementPositions[slideIndex][key]) appState.elementPositions[slideIndex][key] = {};
+        appState.elementPositions[slideIndex][key].position = {
+            left: activeTextElement.style.left,
+            top: activeTextElement.style.top,
+            width: activeTextElement.style.width,
+            height: `${activeTextElement.offsetHeight}px`,
+            transform: activeTextElement.style.transform
+        };
+
+        // Update active button
+        document.querySelectorAll('.alignment-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`[data-align-h="${h}"][data-align-v="${v}"]`).classList.add('active');
+    };
+
+
+    // --- EVENT LISTENERS ---
+    dom.buttons.goToStep2.addEventListener('click', async () => {
+        const provider = dom.inputs.apiProviderSelect.value;
+        const apiKeyInput = document.querySelector(`#${provider}-key-input-container input`);
+        
+        const required = [apiKeyInput, dom.inputs.moderatorName, dom.inputs.webinarName, dom.inputs.webinarBenefit, dom.inputs.heroStory, dom.inputs.product, dom.inputs.audience];
+        if (required.some(input => !input.value?.trim() && !(input.files?.length))) return showToast('Bitte alle erforderlichen Felder ausfüllen und Dateien hochladen.', 'error');
+      
+        try {
+            Object.assign(appState, {
+            apiProvider: provider,
+            grokApiKey: dom.inputs.grokApiKey.value,
+            openaiApiKey: dom.inputs.openaiApiKey.value,
+            geminiApiKey: dom.inputs.geminiApiKey.value,
+            moderatorName: dom.inputs.moderatorName.value,
+            webinarName: dom.inputs.webinarName.value,
+            webinarBenefit: dom.inputs.webinarBenefit.value,
+            giftPromise: dom.inputs.giftPromise.value,
+            callToAction: dom.inputs.callToAction.value,
+            heroStoryContent: await readFileAsText(dom.inputs.heroStory.files[0]),
+            productContent: await readFileAsText(dom.inputs.product.files[0]),
+            audienceContent: await readFileAsText(dom.inputs.audience.files[0]),
+            faqContent: await readFileAsText(dom.inputs.faq.files[0]),
+            productModules: dom.inputs.productModules.value.split(',').map(s => s.trim()).filter(Boolean),
+            bonusInfo: dom.inputs.bonusInfo.value.split(',').map(s => s.trim()).filter(Boolean),
+            pricingInfo: dom.inputs.pricingInfo.value.split(',').map(s => s.trim()).filter(Boolean),
+            guarantee: dom.inputs.guaranteeDays.value !== '0' ? `${dom.inputs.guaranteeDays.value} Tage Geld-zurück-Garantie` : 'Keine'
+            });
+            appState.currentStep = 2; updateStepUI();
+        } catch (e) { showToast(`Fehler beim Lesen der Dateien: ${e.message}`, 'error'); }
+    });
+
+    dom.inputs.apiProviderSelect.addEventListener('change', updateApiProviderUI);
+    dom.buttons.backToStep1.addEventListener('click', () => { appState.currentStep = 1; updateStepUI(); });
+    dom.buttons.generateAndPreview.addEventListener('click', generateWebinar);
+    dom.buttons.backToStep2.addEventListener('click', () => { appState.currentStep = 2; updateStepUI(); });
+    dom.sidebar.undoBtn.addEventListener('click', undoLastAction);
+    dom.sidebar.slideCountSlider.addEventListener('input', e => { appState.slideCount = parseInt(e.target.value, 10); dom.sidebar.slideCountDisplay.textContent = appState.slideCount; });
+    dom.sidebar.logoUpload.addEventListener('change', async e => { if (e.target.files[0]) { appState.logoUrl = await getImageUrl(e.target.files[0]); if (appState.webinarScript.length) renderSlide(appState.currentSlideIndex); } });
+    dom.sidebar.themeLightBtn.addEventListener('click', () => applyTheme('light'));
+    dom.sidebar.themeDarkBtn.addEventListener('click', () => applyTheme('dark'));
+    ['input','change'].forEach(evt => { [dom.sidebar.logoX, dom.sidebar.logoY, dom.sidebar.logoSize].forEach(el => el.addEventListener(evt, () => {if(appState.webinarScript.length) renderSlide(appState.currentSlideIndex)})); });
+    dom.main.prevBtn.addEventListener('click', () => { if (appState.currentSlideIndex > 0) renderSlide(appState.currentSlideIndex - 1); });
+    dom.main.nextBtn.addEventListener('click', () => { if (appState.currentSlideIndex < appState.webinarScript.length - 1) renderSlide(appState.currentSlideIndex + 1); });
+    dom.main.slideNumberInput.addEventListener('change', e => { const newIndex = parseInt(e.target.value, 10) - 1; if (newIndex >= 0 && newIndex < appState.webinarScript.length) renderSlide(newIndex); else e.target.value = appState.currentSlideIndex + 1; });
+    dom.buttons.downloadScript.addEventListener('click', downloadScriptAsDoc);
+    dom.buttons.downloadPptx.addEventListener('click', downloadPptx);
+    dom.buttons.fullscreenBtn.addEventListener('click', toggleModalFullscreen);
+    dom.main.fullscreenOverlay.addEventListener('click', (e) => { if (e.target === dom.main.fullscreenOverlay) toggleModalFullscreen(); });
+    dom.inputs.addressFormDu.addEventListener('click', () => applyAddressForm('du'));
+    dom.inputs.addressFormSie.addEventListener('click', () => applyAddressForm('sie'));
+
+    dom.main.slideContainer.addEventListener('dblclick', e => {
+      const target = e.target.closest('.draggable');
+      if (target && (target.tagName === 'H1' || target.tagName === 'H2' || target.tagName === 'UL')) {
+        target.setAttribute('contenteditable', 'true');
+        target.focus();
+        showTextEditor(target);
+      }
+    });
+
+    document.addEventListener('click', e => {
+      if (activeTextElement && !dom.textEditor.commandCenter.contains(e.target) && !activeTextElement.contains(e.target) && !dom.sidebar.alignmentControls.contains(e.target)) {
+        const slideIndex = appState.currentSlideIndex;
+        const key = activeTextElement.dataset.key;
+        const newContent = activeTextElement.innerHTML;
+        
+        if (appState.webinarScript[slideIndex] && appState.webinarScript[slideIndex].content) {
+            if (key === 'points') {
+                // For lists, we need to parse the LI elements back into an array
+                const pointsArray = [...activeTextElement.querySelectorAll('li')].map(li => li.querySelector('span:last-child').textContent);
+                // Simple check if array content changed
+                if (JSON.stringify(pointsArray) !== JSON.stringify(appState.webinarScript[slideIndex].content[key])) {
+                     saveState();
+                     appState.webinarScript[slideIndex].content[key] = pointsArray;
+                     showToast('Text aktualisiert', 'info', 1500);
+                }
+            } else if (appState.webinarScript[slideIndex].content[key] !== newContent) {
+                saveState();
+                appState.webinarScript[slideIndex].content[key] = newContent;
+                showToast('Text aktualisiert', 'info', 1500);
+            }
+        }
+
+        activeTextElement.removeAttribute('contenteditable');
+        hideTextEditor();
+      }
+    });
+    
+    dom.textEditor.fontFamily.addEventListener('change', (e) => applyTextStyle('fontFamily', e.target.value));
+    dom.textEditor.fontSize.addEventListener('input', (e) => applyTextStyle('fontSize', `${e.target.value}px`));
+    dom.textEditor.fontColor.addEventListener('input', (e) => applyTextStyle('color', e.target.value));
+    
+    dom.textEditor.gradientColor1.addEventListener('input', (e) => applyTextStyle('gradient1', e.target.value));
+    dom.textEditor.gradientColor2.addEventListener('input', (e) => applyTextStyle('gradient2', e.target.value));
+    
+    dom.sidebar.alignmentControls.addEventListener('click', (e) => {
+        const button = e.target.closest('.alignment-btn');
+        if (button) {
+            const h = button.dataset.alignH;
+            const v = button.dataset.alignV;
+            applyAlignment(h, v);
+        }
+    });
+
+    dom.textEditor.boldBtn.addEventListener('click', () => {
+        if (!activeTextElement) return;
+        saveState();
+        const isH1 = activeTextElement.tagName === 'H1';
+        
+        const currentWeight = window.getComputedStyle(activeTextElement).fontWeight;
+        const isBold = parseInt(currentWeight) >= 700;
+
+        const newWeight = isBold ? 'normal' : (isH1 ? '900' : 'bold');
+        activeTextElement.style.fontWeight = newWeight;
+        
+        if (isH1) {
+            activeTextElement.classList.toggle('font-black', !isBold);
+        }
+
+        const slideIndex = appState.currentSlideIndex;
+        const key = activeTextElement.dataset.key;
+        if (!appState.elementPositions[slideIndex]) appState.elementPositions[slideIndex] = {};
+        if (!appState.elementPositions[slideIndex][key]) appState.elementPositions[slideIndex][key] = {};
+        if (!appState.elementPositions[slideIndex][key].styles) appState.elementPositions[slideIndex][key].styles = {};
+        
+        appState.elementPositions[slideIndex][key].styles.fontWeight = newWeight;
+    });
+    dom.textEditor.italicBtn.addEventListener('click', () => {
+        if (!activeTextElement) return;
+        const currentStyle = activeTextElement.style.fontStyle;
+        applyTextStyle('fontStyle', currentStyle === 'italic' ? 'normal' : 'italic');
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (dom.main.fullscreenOverlay.classList.contains('hidden')) return;
+
+        let slideChanged = false;
+        if (e.key === 'ArrowRight' && appState.currentSlideIndex < appState.webinarScript.length - 1) {
+            renderSlide(appState.currentSlideIndex + 1);
+            slideChanged = true;
+        } else if (e.key === 'ArrowLeft' && appState.currentSlideIndex > 0) {
+            renderSlide(appState.currentSlideIndex - 1);
+            slideChanged = true;
+        } else if (e.key === 'Escape') {
+            toggleModalFullscreen();
+        }
+
+        if (slideChanged) {
+            toggleModalFullscreen();
+            toggleModalFullscreen();
+        }
+    });
+
+
+    // --- INITIALIZATION ---
+    updateStepUI();
+    applyTheme(appState.theme);
+    applyAddressForm(appState.addressForm);
+    updateApiProviderUI();
+  });
+</script>
+</body>
+</html>
